@@ -1,342 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-  <meta name="apple-mobile-web-app-title" content="Smart Notes" />
-  <title>Smart Notes</title>
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      background: #f5f5f7;
-      color: #1c1c1e;
-      min-height: 100vh;
-      padding-bottom: 60px;
-    }
-
-    /* ── SCREENS ── */
-    .screen { display: none; }
-    .screen.active { display: block; }
-
-    /* ── HEADER ── */
-    header {
-      background: #fff;
-      padding: 16px 20px 12px;
-      border-bottom: 0.5px solid #ddd;
-      position: sticky;
-      top: 0;
-      z-index: 10;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    header h1 { font-size: 22px; font-weight: 600; }
-    header p { font-size: 13px; color: #888; margin-top: 2px; }
-
-    .settings-btn {
-      background: none;
-      border: none;
-      font-size: 22px;
-      cursor: pointer;
-      padding: 4px;
-      color: #007aff;
-    }
-
-    /* ── INPUT AREA ── */
-    .input-area {
-      background: #fff;
-      padding: 16px 20px;
-      border-bottom: 0.5px solid #ddd;
-    }
-
-    textarea {
-      width: 100%;
-      min-height: 80px;
-      padding: 10px 12px;
-      border: 1px solid #ddd;
-      border-radius: 10px;
-      font-size: 15px;
-      font-family: inherit;
-      resize: none;
-      outline: none;
-      background: #f9f9f9;
-      color: #1c1c1e;
-    }
-
-    textarea:focus { border-color: #007aff; background: #fff; }
-
-    .save-btn {
-      margin-top: 10px;
-      width: 100%;
-      padding: 12px;
-      background: #007aff;
-      color: #fff;
-      border: none;
-      border-radius: 10px;
-      font-size: 16px;
-      font-weight: 500;
-      cursor: pointer;
-    }
-
-    .save-btn:disabled { background: #a0c4ff; }
-
-    #status {
-      font-size: 13px;
-      color: #555;
-      margin-top: 8px;
-      text-align: center;
-      min-height: 18px;
-    }
-
-    #status.error { color: #ff3b30; }
-    #status.success { color: #34c759; }
-
-    /* ── NOTES AREA ── */
-    #notesArea { padding: 20px; }
-
-    .empty-state {
-      text-align: center;
-      color: #aaa;
-      font-size: 15px;
-      padding: 3rem 1rem;
-      line-height: 1.8;
-    }
-
-    .empty-icon { font-size: 40px; margin-bottom: 12px; }
-
-    .category-block { margin-bottom: 24px; }
-
-    .cat-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 10px;
-    }
-
-    .cat-title {
-      font-size: 12px;
-      font-weight: 600;
-      color: #888;
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-    }
-
-    .cat-count { font-size: 12px; color: #aaa; }
-
-    .note-item {
-      background: #fff;
-      border-radius: 12px;
-      padding: 12px 14px;
-      margin-bottom: 8px;
-      display: flex;
-      align-items: flex-start;
-      gap: 10px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
-    }
-
-    .note-text {
-      font-size: 15px;
-      color: #1c1c1e;
-      line-height: 1.5;
-      flex: 1;
-    }
-
-    .note-time { font-size: 11px; color: #aaa; margin-top: 4px; }
-
-    .del-btn {
-      background: none;
-      border: none;
-      cursor: pointer;
-      color: #ccc;
-      font-size: 18px;
-      padding: 0;
-      line-height: 1;
-      flex-shrink: 0;
-    }
-
-    .del-btn:active { color: #ff3b30; }
-
-    /* ── SETTINGS SCREEN ── */
-    .settings-header {
-      background: #fff;
-      padding: 16px 20px 12px;
-      border-bottom: 0.5px solid #ddd;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .back-btn {
-      background: none;
-      border: none;
-      font-size: 16px;
-      color: #007aff;
-      cursor: pointer;
-      padding: 4px 0;
-    }
-
-    .settings-header h2 { font-size: 18px; font-weight: 600; }
-
-    .settings-body { padding: 24px 20px; }
-
-    .settings-card {
-      background: #fff;
-      border-radius: 12px;
-      padding: 16px;
-      margin-bottom: 16px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
-    }
-
-    .settings-label {
-      font-size: 13px;
-      font-weight: 600;
-      color: #888;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      margin-bottom: 10px;
-    }
-
-    .settings-hint {
-      font-size: 13px;
-      color: #888;
-      margin-bottom: 12px;
-      line-height: 1.5;
-    }
-
-    .settings-hint a { color: #007aff; text-decoration: none; }
-
-    .key-input-wrap {
-      display: flex;
-      gap: 8px;
-      align-items: center;
-    }
-
-    .key-input {
-      flex: 1;
-      padding: 10px 12px;
-      border: 1px solid #ddd;
-      border-radius: 10px;
-      font-size: 14px;
-      font-family: monospace;
-      outline: none;
-      color: #1c1c1e;
-      background: #f9f9f9;
-    }
-
-    .key-input:focus { border-color: #007aff; background: #fff; }
-
-    .key-status {
-      font-size: 13px;
-      margin-top: 10px;
-      min-height: 18px;
-    }
-
-    .key-status.saved { color: #34c759; }
-    .key-status.cleared { color: #ff9500; }
-
-    .btn-save-key {
-      padding: 10px 16px;
-      background: #007aff;
-      color: #fff;
-      border: none;
-      border-radius: 10px;
-      font-size: 14px;
-      font-weight: 500;
-      cursor: pointer;
-      white-space: nowrap;
-    }
-
-    .btn-clear-key {
-      width: 100%;
-      margin-top: 10px;
-      padding: 10px;
-      background: none;
-      color: #ff3b30;
-      border: 1px solid #ff3b30;
-      border-radius: 10px;
-      font-size: 14px;
-      cursor: pointer;
-    }
-
-    .no-key-banner {
-      background: #fff8e1;
-      border: 1px solid #ffe082;
-      border-radius: 10px;
-      padding: 12px 14px;
-      font-size: 14px;
-      color: #7a5f00;
-      margin: 16px 20px 0;
-      text-align: center;
-      cursor: pointer;
-    }
-  </style>
-</head>
-<body>
-
-  <!-- ══ MAIN SCREEN ══ -->
-  <div id="mainScreen" class="screen active">
-
-    <header>
-      <div>
-        <h1>Smart Notes</h1>
-        <p>AI sorts your notes automatically</p>
-      </div>
-      <button class="settings-btn" onclick="showSettings()" title="Settings">⚙️</button>
-    </header>
-
-    <div id="noKeyBanner" class="no-key-banner" onclick="showSettings()" style="display:none;">
-      ⚠️ No API key set. Tap here to add your Gemini API key.
-    </div>
-
-    <div class="input-area">
-      <textarea id="noteInput" placeholder="Type anything... e.g. Watch Dune 3, Buy milk, Call dentist"></textarea>
-      <button class="save-btn" id="saveBtn" onclick="saveNote()">Save Note</button>
-      <p id="status"></p>
-    </div>
-
-    <div id="notesArea"></div>
-
-  </div>
-
-  <!-- ══ SETTINGS SCREEN ══ -->
-  <div id="settingsScreen" class="screen">
-
-    <div class="settings-header">
-      <button class="back-btn" onclick="showMain()">&#8592; Back</button>
-      <h2>Settings</h2>
-    </div>
-
-    <div class="settings-body">
-
-      <div class="settings-card">
-        <div class="settings-label">Gemini API Key</div>
-        <p class="settings-hint">
-          Get a free key from <a href="https://aistudio.google.com" target="_blank">aistudio.google.com</a>
-          → API Keys → Create API Key.<br><br>
-          Your key is stored only on this device and never shared anywhere.
-        </p>
-        <div class="key-input-wrap">
-          <input class="key-input" id="keyInput" type="password" placeholder="AIzaSy..." />
-          <button class="btn-save-key" onclick="saveKey()">Save</button>
-        </div>
-        <p class="key-status" id="keyStatus"></p>
-        <button class="btn-clear-key" onclick="clearKey()">Remove API Key</button>
-      </div>
-
-      <div class="settings-card">
-        <div class="settings-label">Danger Zone</div>
-        <button class="btn-clear-key" onclick="clearAllNotes()">Delete All Notes</button>
-      </div>
-
-    </div>
-  </div>
-
-  <script>
+<script>
     const NOTES_KEY   = "smart_notes_v1";
     const API_KEY_KEY = "smart_notes_api_key";
 
@@ -462,35 +124,37 @@
         : "There are no existing categories yet.";
 
       const prompt = `You are a note organizer. ${catList}
-
 The user just wrote this note: "${noteText}"
-
 Decide which category this note belongs to.
 - If it fits an existing category, return that exact category name.
 - If it does not fit any, create a short new category name (2-3 words max).
-- Return ONLY the category name. Nothing else. No punctuation at the end.`;
+- Return ONLY the category name. Nothing else.`;
 
+      // CHANGED: Using gemini-1.5-flash for better free-tier availability
       const res = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`,
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             contents: [{ parts: [{ text: prompt }] }],
-            generationConfig: { temperature: 0, maxOutputTokens: 20 }
+            generationConfig: { temperature: 0.1, maxOutputTokens: 20 }
           })
         }
       );
 
       if (!res.ok) {
         const errData = await res.json();
-        const msg = errData?.error?.message || "Unknown API error";
-        throw new Error(msg);
+        // Friendly error handling for the "Limit 0" or Quota issues
+        if (res.status === 429) {
+          throw new Error("API is busy or quota reached. Please try again in 30 seconds.");
+        }
+        throw new Error(errData?.error?.message || "Connection Error");
       }
 
       const data = await res.json();
       const raw  = data?.candidates?.[0]?.content?.parts?.[0]?.text;
-      if (!raw) throw new Error("Gemini returned an empty response.");
+      if (!raw) throw new Error("AI could not categorize this. Try again.");
 
       return raw.trim().replace(/[.!?]$/, "");
     }
@@ -519,7 +183,7 @@ Decide which category this note belongs to.
         input.value = "";
         status.className = "success";
         status.textContent = "Filed under: " + category;
-        setTimeout(() => { status.textContent = ""; status.className = ""; }, 3000);
+        setTimeout(() => { if(status.className === "success") status.textContent = ""; }, 3000);
         renderNotes();
       } catch (e) {
         status.className = "error";
@@ -538,6 +202,3 @@ Decide which category this note belongs to.
     checkKeyBanner();
     renderNotes();
   </script>
-
-</body>
-</html>
