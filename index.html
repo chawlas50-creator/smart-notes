@@ -1,19 +1,292 @@
-<script>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="Smart Notes" />
+  <title>Smart Notes</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #f5f5f7;
+      color: #1c1c1e;
+      min-height: 100vh;
+      padding-bottom: 60px;
+    }
+    .screen { display: none; }
+    .screen.active { display: block; }
+    header {
+      background: #fff;
+      padding: 16px 20px 12px;
+      border-bottom: 0.5px solid #ddd;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    header h1 { font-size: 22px; font-weight: 600; }
+    header p { font-size: 13px; color: #888; margin-top: 2px; }
+    .settings-btn {
+      background: none;
+      border: none;
+      font-size: 22px;
+      cursor: pointer;
+      padding: 4px;
+      color: #007aff;
+    }
+    .input-area {
+      background: #fff;
+      padding: 16px 20px;
+      border-bottom: 0.5px solid #ddd;
+    }
+    textarea {
+      width: 100%;
+      min-height: 80px;
+      padding: 10px 12px;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      font-size: 15px;
+      font-family: inherit;
+      resize: none;
+      outline: none;
+      background: #f9f9f9;
+      color: #1c1c1e;
+    }
+    textarea:focus { border-color: #007aff; background: #fff; }
+    .save-btn {
+      margin-top: 10px;
+      width: 100%;
+      padding: 12px;
+      background: #007aff;
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: 500;
+      cursor: pointer;
+    }
+    .save-btn:disabled { background: #a0c4ff; }
+    #status {
+      font-size: 13px;
+      color: #555;
+      margin-top: 8px;
+      text-align: center;
+      min-height: 18px;
+    }
+    #status.error { color: #ff3b30; }
+    #status.success { color: #34c759; }
+    #notesArea { padding: 20px; }
+    .empty-state {
+      text-align: center;
+      color: #aaa;
+      font-size: 15px;
+      padding: 3rem 1rem;
+      line-height: 1.8;
+    }
+    .empty-icon { font-size: 40px; margin-bottom: 12px; }
+    .category-block { margin-bottom: 24px; }
+    .cat-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+    .cat-title {
+      font-size: 12px;
+      font-weight: 600;
+      color: #888;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+    .cat-count { font-size: 12px; color: #aaa; }
+    .note-item {
+      background: #fff;
+      border-radius: 12px;
+      padding: 12px 14px;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    }
+    .note-text {
+      font-size: 15px;
+      color: #1c1c1e;
+      line-height: 1.5;
+      flex: 1;
+    }
+    .note-time { font-size: 11px; color: #aaa; margin-top: 4px; }
+    .del-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: #ccc;
+      font-size: 18px;
+      padding: 0;
+      line-height: 1;
+      flex-shrink: 0;
+    }
+    .del-btn:active { color: #ff3b30; }
+    .settings-header {
+      background: #fff;
+      padding: 16px 20px 12px;
+      border-bottom: 0.5px solid #ddd;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .back-btn {
+      background: none;
+      border: none;
+      font-size: 16px;
+      color: #007aff;
+      cursor: pointer;
+      padding: 4px 0;
+    }
+    .settings-header h2 { font-size: 18px; font-weight: 600; }
+    .settings-body { padding: 24px 20px; }
+    .settings-card {
+      background: #fff;
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    }
+    .settings-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: #888;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 10px;
+    }
+    .settings-hint {
+      font-size: 13px;
+      color: #888;
+      margin-bottom: 12px;
+      line-height: 1.5;
+    }
+    .settings-hint a { color: #007aff; text-decoration: none; }
+    .key-input-wrap {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    .key-input {
+      flex: 1;
+      padding: 10px 12px;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      font-size: 14px;
+      font-family: monospace;
+      outline: none;
+      color: #1c1c1e;
+      background: #f9f9f9;
+    }
+    .key-input:focus { border-color: #007aff; background: #fff; }
+    .key-status {
+      font-size: 13px;
+      margin-top: 10px;
+      min-height: 18px;
+    }
+    .key-status.saved { color: #34c759; }
+    .key-status.cleared { color: #ff9500; }
+    .btn-save-key {
+      padding: 10px 16px;
+      background: #007aff;
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .btn-clear-key {
+      width: 100%;
+      margin-top: 10px;
+      padding: 10px;
+      background: none;
+      color: #ff3b30;
+      border: 1px solid #ff3b30;
+      border-radius: 10px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+    .no-key-banner {
+      background: #fff8e1;
+      border: 1px solid #ffe082;
+      border-radius: 10px;
+      padding: 12px 14px;
+      font-size: 14px;
+      color: #7a5f00;
+      margin: 16px 20px 0;
+      text-align: center;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="mainScreen" class="screen active">
+    <header>
+      <div>
+        <h1>Smart Notes</h1>
+        <p>AI sorts your notes automatically</p>
+      </div>
+      <button class="settings-btn" onclick="showSettings()">⚙️</button>
+    </header>
+
+    <div id="noKeyBanner" class="no-key-banner" onclick="showSettings()" style="display:none;">
+      ⚠️ No API key set. Tap here to add your Gemini API key.
+    </div>
+
+    <div class="input-area">
+      <textarea id="noteInput" placeholder="Type anything... e.g. Buy milk, Call dentist"></textarea>
+      <button class="save-btn" id="saveBtn" onclick="saveNote()">Save Note</button>
+      <p id="status"></p>
+    </div>
+
+    <div id="notesArea"></div>
+  </div>
+
+  <div id="settingsScreen" class="screen">
+    <div class="settings-header">
+      <button class="back-btn" onclick="showMain()">← Back</button>
+      <h2>Settings</h2>
+    </div>
+    <div class="settings-body">
+      <div class="settings-card">
+        <div class="settings-label">Gemini API Key</div>
+        <p class="settings-hint">
+          Get a key from <a href="https://aistudio.google.com" target="_blank">aistudio.google.com</a>.
+        </p>
+        <div class="key-input-wrap">
+          <input class="key-input" id="keyInput" type="password" placeholder="AIzaSy..." />
+          <button class="btn-save-key" onclick="saveKey()">Save</button>
+        </div>
+        <p class="key-status" id="keyStatus"></p>
+        <button class="btn-clear-key" onclick="clearKey()">Remove API Key</button>
+      </div>
+      <div class="settings-card">
+        <div class="settings-label">Danger Zone</div>
+        <button class="btn-clear-key" onclick="clearAllNotes()">Delete All Notes</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
     const NOTES_KEY   = "smart_notes_v1";
     const API_KEY_KEY = "smart_notes_api_key";
 
-    function getApiKey() {
-      return localStorage.getItem(API_KEY_KEY) || "";
-    }
-
-    function loadNotes() {
-      try { return JSON.parse(localStorage.getItem(NOTES_KEY)) || {}; }
-      catch { return {}; }
-    }
-
-    function saveNotes(notes) {
-      localStorage.setItem(NOTES_KEY, JSON.stringify(notes));
-    }
+    function getApiKey() { return localStorage.getItem(API_KEY_KEY) || ""; }
+    function loadNotes() { try { return JSON.parse(localStorage.getItem(NOTES_KEY)) || {}; } catch { return {}; } }
+    function saveNotes(notes) { localStorage.setItem(NOTES_KEY, JSON.stringify(notes)); }
 
     function timeAgo(ts) {
       const diff = Math.floor((Date.now() - ts) / 1000);
@@ -23,7 +296,6 @@
       return Math.floor(diff / 86400) + "d ago";
     }
 
-    /* ── SCREENS ── */
     function showSettings() {
       document.getElementById("mainScreen").classList.remove("active");
       document.getElementById("settingsScreen").classList.add("active");
@@ -42,68 +314,53 @@
       renderNotes();
     }
 
-    /* ── API KEY MANAGEMENT ── */
     function saveKey() {
       const val = document.getElementById("keyInput").value.trim();
-      if (!val) { alert("Please paste your API key first."); return; }
+      if (!val) { alert("Please paste your API key."); return; }
       localStorage.setItem(API_KEY_KEY, val);
-      document.getElementById("keyStatus").textContent = "✓ Key saved on this device!";
+      document.getElementById("keyStatus").textContent = "✓ Key saved!";
       document.getElementById("keyStatus").className = "key-status saved";
     }
 
     function clearKey() {
-      if (!confirm("Remove your API key from this device?")) return;
+      if (!confirm("Remove key?")) return;
       localStorage.removeItem(API_KEY_KEY);
       document.getElementById("keyInput").value = "";
       document.getElementById("keyStatus").textContent = "Key removed.";
       document.getElementById("keyStatus").className = "key-status cleared";
+      checkKeyBanner();
     }
 
     function clearAllNotes() {
-      if (!confirm("Delete ALL notes? This cannot be undone.")) return;
+      if (!confirm("Delete all notes?")) return;
       localStorage.removeItem(NOTES_KEY);
       renderNotes();
-      showMain();
     }
 
     function checkKeyBanner() {
-      const banner = document.getElementById("noKeyBanner");
-      banner.style.display = getApiKey() ? "none" : "block";
+      document.getElementById("noKeyBanner").style.display = getApiKey() ? "none" : "block";
     }
 
-    /* ── RENDER NOTES ── */
     function renderNotes() {
       const notes = loadNotes();
-      const area  = document.getElementById("notesArea");
-      const cats  = Object.keys(notes);
-
+      const area = document.getElementById("notesArea");
+      const cats = Object.keys(notes);
       if (cats.length === 0) {
-        area.innerHTML = `
-          <div class="empty-state">
-            <div class="empty-icon">📝</div>
-            <p>No notes yet.<br>Add your first one above!</p>
-          </div>`;
+        area.innerHTML = '<div class="empty-state"><div class="empty-icon">📝</div><p>No notes yet.</p></div>';
         return;
       }
-
-      area.innerHTML = cats.map(cat => {
-        const items = notes[cat];
-        return `
-          <div class="category-block">
-            <div class="cat-header">
-              <span class="cat-title">${cat}</span>
-              <span class="cat-count">${items.length} note${items.length > 1 ? "s" : ""}</span>
-            </div>
-            ${items.map((item, i) => `
-              <div class="note-item">
-                <div style="flex:1">
-                  <div class="note-text">${item.text}</div>
-                  <div class="note-time">${timeAgo(item.ts)}</div>
-                </div>
-                <button class="del-btn" onclick="deleteNote('${cat}', ${i})">&#x2715;</button>
-              </div>`).join("")}
-          </div>`;
-      }).join("");
+      area.innerHTML = cats.map(cat => `
+        <div class="category-block">
+          <div class="cat-header"><span class="cat-title">${cat}</span></div>
+          ${notes[cat].map((item, i) => `
+            <div class="note-item">
+              <div style="flex:1">
+                <div class="note-text">${item.text}</div>
+                <div class="note-time">${timeAgo(item.ts)}</div>
+              </div>
+              <button class="del-btn" onclick="deleteNote('${cat}', ${i})">✕</button>
+            </div>`).join("")}
+        </div>`).join("");
     }
 
     function deleteNote(cat, idx) {
@@ -114,91 +371,55 @@
       renderNotes();
     }
 
-    /* ── AI CATEGORISATION ── */
     async function getCategory(noteText, existingCategories) {
       const apiKey = getApiKey();
-      if (!apiKey) throw new Error("No API key. Tap ⚙️ to add your Gemini API key.");
+      if (!apiKey) throw new Error("No API key set.");
+      const catList = existingCategories.length > 0 ? `Existing: ${existingCategories.join(", ")}.` : "No categories yet.";
+      const prompt = `You are a note organizer. ${catList} Note: "${noteText}" Return ONLY a category name (2 words max).`;
 
-      const catList = existingCategories.length > 0
-        ? `Existing categories: ${existingCategories.join(", ")}.`
-        : "There are no existing categories yet.";
+      const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+      });
 
-      const prompt = `You are a note organizer. ${catList}
-The user just wrote this note: "${noteText}"
-Decide which category this note belongs to.
-- If it fits an existing category, return that exact category name.
-- If it does not fit any, create a short new category name (2-3 words max).
-- Return ONLY the category name. Nothing else.`;
-
-      // CHANGED: Using gemini-1.5-flash for better free-tier availability
-      const res = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            contents: [{ parts: [{ text: prompt }] }],
-            generationConfig: { temperature: 0.1, maxOutputTokens: 20 }
-          })
-        }
-      );
-
-      if (!res.ok) {
-        const errData = await res.json();
-        // Friendly error handling for the "Limit 0" or Quota issues
-        if (res.status === 429) {
-          throw new Error("API is busy or quota reached. Please try again in 30 seconds.");
-        }
-        throw new Error(errData?.error?.message || "Connection Error");
-      }
-
+      if (!res.ok) throw new Error("AI Error: Please check your API key or quota.");
       const data = await res.json();
-      const raw  = data?.candidates?.[0]?.content?.parts?.[0]?.text;
-      if (!raw) throw new Error("AI could not categorize this. Try again.");
-
-      return raw.trim().replace(/[.!?]$/, "");
+      return data.candidates[0].content.parts[0].text.trim();
     }
 
-    /* ── SAVE NOTE ── */
     async function saveNote() {
-      const input  = document.getElementById("noteInput");
-      const btn    = document.getElementById("saveBtn");
+      const input = document.getElementById("noteInput");
+      const btn = document.getElementById("saveBtn");
       const status = document.getElementById("status");
-      const text   = input.value.trim();
+      const text = input.value.trim();
       if (!text) return;
 
       btn.disabled = true;
-      status.className = "";
-      status.textContent = "AI is sorting your note...";
-
+      status.textContent = "Sorting...";
       try {
-        const notes        = loadNotes();
-        const existingCats = Object.keys(notes);
-        const category     = await getCategory(text, existingCats);
-
+        const notes = loadNotes();
+        const category = await getCategory(text, Object.keys(notes));
         if (!notes[category]) notes[category] = [];
         notes[category].unshift({ text, ts: Date.now() });
         saveNotes(notes);
-
         input.value = "";
-        status.className = "success";
-        status.textContent = "Filed under: " + category;
-        setTimeout(() => { if(status.className === "success") status.textContent = ""; }, 3000);
+        status.textContent = "Saved to " + category;
         renderNotes();
       } catch (e) {
-        status.className = "error";
         status.textContent = e.message;
+        status.className = "error";
       }
-
       btn.disabled = false;
     }
 
-    /* ── ENTER KEY ── */
-    document.getElementById("noteInput").addEventListener("keydown", function(e) {
+    document.getElementById("noteInput").addEventListener("keydown", (e) => {
       if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); saveNote(); }
     });
 
-    /* ── INIT ── */
+    // STARTUP
     checkKeyBanner();
     renderNotes();
   </script>
+</body>
+</html>
