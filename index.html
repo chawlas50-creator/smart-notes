@@ -236,12 +236,24 @@ Decide which category this note belongs to.
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: prompt }] }],
+            generationConfig: { temperature: 0, maxOutputTokens: 20 }
+          })
         }
       );
 
+      if (!res.ok) {
+        const errData = await res.json();
+        const errMsg = errData?.error?.message || "Unknown API error";
+        throw new Error("Gemini API error: " + errMsg);
+      }
+
       const data = await res.json();
-      const raw = data?.candidates?.[0]?.content?.parts?.[0]?.text || "General";
+      const raw = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+
+      if (!raw) throw new Error("Gemini returned empty response");
+
       return raw.trim().replace(/[.!?]$/, '');
     }
 
@@ -269,7 +281,7 @@ Decide which category this note belongs to.
         setTimeout(() => { status.textContent = ""; }, 3000);
         renderNotes();
       } catch (e) {
-        status.textContent = "Something went wrong. Check your internet connection.";
+        status.textContent = "Error: " + e.message;
         console.error(e);
       }
 
