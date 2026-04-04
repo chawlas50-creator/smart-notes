@@ -20,405 +20,253 @@
       --sidebar-w: 260px;
       --header-h: 56px;
     }
-
     * { box-sizing: border-box; margin: 0; padding: 0; }
-
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      height: 100vh;
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
+      background: var(--bg); color: var(--text);
+      height: 100vh; overflow: hidden;
+      display: flex; flex-direction: column;
     }
 
     /* ── HEADER ── */
     .header {
-      height: var(--header-h);
-      background: var(--surface);
+      height: var(--header-h); background: var(--surface);
       border-bottom: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      padding: 0 16px;
-      gap: 12px;
-      flex-shrink: 0;
-      z-index: 100;
+      display: flex; align-items: center;
+      padding: 0 16px; gap: 12px; flex-shrink: 0; z-index: 100;
     }
-
     .hamburger {
       background: none; border: none; color: var(--text2);
-      font-size: 20px; cursor: pointer; padding: 6px;
-      border-radius: 50%; flex-shrink: 0;
+      font-size: 20px; cursor: pointer; padding: 6px; border-radius: 50%; flex-shrink: 0;
     }
     .hamburger:hover { background: var(--surface2); }
-
-    .header-title {
-      font-size: 18px; font-weight: 500; color: var(--text);
-      flex: 1;
-    }
-
+    .header-title { font-size: 18px; font-weight: 500; color: var(--text); flex: 1; }
     .header-add-btn {
       background: none; border: none; color: var(--accent);
-      font-size: 26px; cursor: pointer; padding: 4px 8px;
-      border-radius: 8px; line-height: 1;
+      font-size: 26px; cursor: pointer; padding: 4px 8px; border-radius: 8px; line-height: 1;
     }
     .header-add-btn:hover { background: var(--surface2); }
 
     /* ── BODY ── */
-    .body {
-      display: flex;
-      flex: 1;
-      overflow: hidden;
-      position: relative;
-    }
+    .body { display: flex; flex: 1; overflow: hidden; position: relative; }
 
     /* ── SIDEBAR ── */
     .sidebar-overlay {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.5);
-      z-index: 200;
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,0.5); z-index: 200;
     }
     .sidebar-overlay.open { display: block; }
-
     .sidebar {
-      position: fixed;
-      top: 0; left: 0; bottom: 0;
-      width: var(--sidebar-w);
-      background: var(--surface);
-      border-right: 1px solid var(--border);
-      z-index: 201;
-      display: flex;
-      flex-direction: column;
-      transform: translateX(-100%);
-      transition: transform 0.25s ease;
-      overflow-y: auto;
+      position: fixed; top: 0; left: 0; bottom: 0;
+      width: var(--sidebar-w); background: var(--surface);
+      border-right: 1px solid var(--border); z-index: 201;
+      display: flex; flex-direction: column;
+      transform: translateX(-100%); transition: transform 0.25s ease; overflow-y: auto;
     }
     .sidebar.open { transform: translateX(0); }
-
     .sidebar-logo {
-      padding: 20px 16px 12px;
-      font-size: 20px;
-      font-weight: 600;
-      color: var(--text);
-      border-bottom: 1px solid var(--border);
-      flex-shrink: 0;
+      padding: 20px 16px 12px; font-size: 20px; font-weight: 600;
+      color: var(--text); border-bottom: 1px solid var(--border); flex-shrink: 0;
     }
-
     .sidebar-section-label {
-      font-size: 11px;
-      font-weight: 600;
-      color: var(--text3);
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      padding: 16px 16px 6px;
+      font-size: 11px; font-weight: 600; color: var(--text3);
+      text-transform: uppercase; letter-spacing: 0.08em; padding: 16px 16px 6px;
     }
-
     .sidebar-item {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      padding: 11px 16px;
-      cursor: pointer;
-      border-radius: 0 24px 24px 0;
-      margin-right: 12px;
-      font-size: 15px;
-      color: var(--text2);
-      transition: background 0.15s;
+      display: flex; align-items: center; gap: 14px;
+      padding: 11px 16px; cursor: pointer;
+      border-radius: 0 24px 24px 0; margin-right: 12px;
+      font-size: 15px; color: var(--text2); transition: background 0.15s;
     }
     .sidebar-item:hover { background: var(--surface2); }
     .sidebar-item.active { background: #394457; color: var(--accent); }
     .sidebar-item .icon { font-size: 18px; width: 22px; text-align: center; flex-shrink: 0; }
+    .sidebar-divider { height: 1px; background: var(--border); margin: 8px 0; }
 
-    .sidebar-divider {
-      height: 1px;
-      background: var(--border);
-      margin: 8px 0;
-    }
-
-    .sidebar-cat-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 6px 16px 4px;
-    }
-
-    .add-cat-sidebar-btn {
-      background: none; border: none;
-      color: var(--text3); font-size: 20px;
-      cursor: pointer; padding: 2px 6px;
-      border-radius: 6px;
-    }
-    .add-cat-sidebar-btn:hover { color: var(--accent); background: var(--surface2); }
-
-    /* ── MAIN CONTENT ── */
-    .main {
-      flex: 1;
-      overflow-y: auto;
-      padding: 16px;
-    }
-
+    /* ── MAIN ── */
+    .main { flex: 1; overflow-y: auto; padding: 16px; }
     .section-label {
-      font-size: 11px;
-      font-weight: 600;
-      color: var(--text3);
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      margin: 8px 0 10px;
+      font-size: 11px; font-weight: 600; color: var(--text3);
+      text-transform: uppercase; letter-spacing: 0.08em; margin: 8px 0 10px;
     }
 
     /* ── NOTE GRID ── */
     .notes-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 10px;
-      margin-bottom: 20px;
+      display: grid; grid-template-columns: repeat(2, 1fr);
+      gap: 10px; margin-bottom: 20px;
     }
-
     .note-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 12px;
-      position: relative;
-      cursor: default;
-      transition: border-color 0.15s;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 10px; padding: 12px;
+      cursor: pointer; transition: border-color 0.15s;
     }
-    .note-card:hover { border-color: #555; }
+    .note-card:hover { border-color: #666; }
     .note-card.pinned { border-color: #555; }
-
     .note-card-text {
-      font-size: 13px;
-      color: var(--text);
-      line-height: 1.5;
-      word-break: break-word;
-      white-space: pre-wrap;
+      font-size: 13px; color: var(--text); line-height: 1.5;
+      word-break: break-word; white-space: pre-wrap;
+      max-height: 120px; overflow: hidden;
     }
-
-    .note-card-cat {
-      font-size: 11px;
-      color: var(--text3);
-      margin-top: 8px;
-    }
-
-    .note-card-time {
-      font-size: 11px;
-      color: var(--text3);
-      margin-top: 2px;
-    }
-
+    .note-card-cat { font-size: 11px; color: var(--text3); margin-top: 8px; }
+    .note-card-time { font-size: 11px; color: var(--text3); margin-top: 2px; }
     .note-card-actions {
-      display: flex;
-      justify-content: flex-end;
-      gap: 4px;
-      margin-top: 8px;
+      display: flex; justify-content: flex-end; gap: 4px; margin-top: 8px;
     }
-
     .card-btn {
-      background: none; border: none;
-      color: var(--text3); font-size: 15px;
-      cursor: pointer; padding: 4px 6px;
-      border-radius: 6px; line-height: 1;
+      background: none; border: none; color: var(--text3);
+      font-size: 15px; cursor: pointer; padding: 4px 6px; border-radius: 6px; line-height: 1;
     }
     .card-btn:hover { background: var(--surface2); color: var(--text2); }
     .card-btn.pin-active { color: #f4c542; }
 
     .empty-state {
-      text-align: center;
-      color: var(--text3);
-      padding: 4rem 1rem;
-      font-size: 15px;
-      line-height: 1.8;
+      text-align: center; color: var(--text3);
+      padding: 4rem 1rem; font-size: 15px; line-height: 2;
     }
-    .empty-icon { font-size: 48px; margin-bottom: 12px; }
 
     /* ── ADD NOTE MODAL ── */
     .modal-overlay {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.6);
-      z-index: 300;
-      align-items: flex-end;
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,0.6); z-index: 300; align-items: flex-end;
     }
     .modal-overlay.open { display: flex; }
-
     .modal {
-      background: var(--surface);
-      width: 100%;
-      border-radius: 20px 20px 0 0;
-      padding: 20px 20px 36px;
+      background: var(--surface); width: 100%;
+      border-radius: 20px 20px 0 0; padding: 20px 20px 36px;
       border-top: 1px solid var(--border);
     }
-
     .modal-handle {
-      width: 36px; height: 4px;
-      background: var(--border);
-      border-radius: 2px;
-      margin: 0 auto 16px;
+      width: 36px; height: 4px; background: var(--border);
+      border-radius: 2px; margin: 0 auto 16px;
     }
-
-    .modal-title {
-      font-size: 16px; font-weight: 600;
-      color: var(--text); margin-bottom: 14px;
-    }
-
+    .modal-title { font-size: 16px; font-weight: 600; color: var(--text); margin-bottom: 14px; }
     .modal textarea {
-      width: 100%;
-      min-height: 100px;
-      background: var(--surface2);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      color: var(--text);
-      font-size: 15px;
-      font-family: inherit;
-      padding: 12px;
-      resize: none;
-      outline: none;
+      width: 100%; min-height: 100px; background: var(--surface2);
+      border: 1px solid var(--border); border-radius: 10px;
+      color: var(--text); font-size: 15px; font-family: inherit;
+      padding: 12px; resize: none; outline: none;
     }
     .modal textarea:focus { border-color: var(--accent); }
-
-    .modal-cat-label {
-      font-size: 12px; color: var(--text2);
-      margin: 12px 0 6px;
-    }
-
-    .modal-pills {
-      display: flex; flex-wrap: wrap; gap: 7px;
-      align-items: center;
-    }
-
+    .modal-cat-label { font-size: 12px; color: var(--text2); margin: 12px 0 6px; }
+    .modal-pills { display: flex; flex-wrap: wrap; gap: 7px; align-items: center; }
     .mpill {
-      padding: 5px 13px;
-      border-radius: 20px;
-      font-size: 13px; font-weight: 500;
-      border: 1px solid var(--border);
-      background: var(--surface2);
-      color: var(--text2);
-      cursor: pointer;
-      white-space: nowrap;
+      padding: 5px 13px; border-radius: 20px; font-size: 13px; font-weight: 500;
+      border: 1px solid var(--border); background: var(--surface2); color: var(--text2);
+      cursor: pointer; white-space: nowrap;
     }
     .mpill.selected { background: var(--accent); color: #111; border-color: var(--accent); }
     .mpill.claude { border-color: #a259f7; color: #c084fc; background: #1e1535; }
     .mpill.claude.selected { background: #a259f7; color: #fff; border-color: #a259f7; }
-
     .add-pill-btn {
       width: 28px; height: 28px; border-radius: 50%;
-      border: 1px dashed var(--border);
-      background: none; color: var(--text3);
-      font-size: 18px; cursor: pointer;
-      display: flex; align-items: center; justify-content: center;
+      border: 1px dashed var(--border); background: none; color: var(--text3);
+      font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center;
     }
     .add-pill-btn:hover { border-color: var(--accent); color: var(--accent); }
-
-    .new-cat-row {
-      display: none;
-      gap: 8px; margin-top: 10px;
-    }
+    .new-cat-row { display: none; gap: 8px; margin-top: 10px; }
     .new-cat-row.visible { display: flex; }
     .new-cat-row input {
-      flex: 1; padding: 8px 12px;
-      background: var(--surface2);
-      border: 1px solid var(--accent);
-      border-radius: 8px;
-      color: var(--text); font-size: 14px; outline: none;
-      font-family: inherit;
+      flex: 1; padding: 8px 12px; background: var(--surface2);
+      border: 1px solid var(--accent); border-radius: 8px;
+      color: var(--text); font-size: 14px; outline: none; font-family: inherit;
     }
     .new-cat-row button {
-      padding: 8px 14px;
-      background: var(--accent); color: #111;
-      border: none; border-radius: 8px;
-      font-size: 14px; font-weight: 600; cursor: pointer;
+      padding: 8px 14px; background: var(--accent); color: #111;
+      border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer;
     }
-
-    .modal-actions {
-      display: flex; gap: 10px; margin-top: 16px;
-    }
-
+    .modal-actions { display: flex; gap: 10px; margin-top: 16px; }
     .btn-save {
-      flex: 1; padding: 12px;
-      background: var(--accent); color: #111;
-      border: none; border-radius: 10px;
-      font-size: 15px; font-weight: 600; cursor: pointer;
+      flex: 1; padding: 12px; background: var(--accent); color: #111;
+      border: none; border-radius: 10px; font-size: 15px; font-weight: 600; cursor: pointer;
     }
     .btn-save:disabled { opacity: 0.5; }
-
     .btn-cancel {
-      padding: 12px 18px;
-      background: var(--surface2); color: var(--text2);
-      border: 1px solid var(--border); border-radius: 10px;
-      font-size: 15px; cursor: pointer;
+      padding: 12px 18px; background: var(--surface2); color: var(--text2);
+      border: 1px solid var(--border); border-radius: 10px; font-size: 15px; cursor: pointer;
     }
-
-    #modalStatus {
-      font-size: 13px; text-align: center;
-      min-height: 18px; margin-top: 8px;
-      color: var(--text2);
-    }
+    #modalStatus { font-size: 13px; text-align: center; min-height: 18px; margin-top: 8px; color: var(--text2); }
     #modalStatus.error { color: #ff6b6b; }
     #modalStatus.success { color: #6bcb77; }
 
-    /* ── SETTINGS MODAL ── */
+    /* ── FULL SCREEN NOTE EDITOR ── */
+    .note-editor {
+      display: none; position: fixed; inset: 0;
+      background: var(--bg); z-index: 500; flex-direction: column;
+    }
+    .note-editor.open { display: flex; }
+    .editor-header {
+      display: flex; align-items: center; gap: 10px;
+      padding: 0 16px; height: var(--header-h);
+      background: var(--surface); border-bottom: 1px solid var(--border); flex-shrink: 0;
+    }
+    .editor-back {
+      background: none; border: none; color: var(--accent);
+      font-size: 22px; cursor: pointer; padding: 4px 8px 4px 0;
+      line-height: 1; flex-shrink: 0;
+    }
+    .editor-cat-badge {
+      font-size: 12px; color: var(--text3);
+      background: var(--surface2); border: 1px solid var(--border);
+      border-radius: 20px; padding: 4px 12px; flex: 1;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .editor-save-btn {
+      background: var(--accent); color: #111; border: none;
+      border-radius: 8px; font-size: 14px; font-weight: 600;
+      padding: 8px 18px; cursor: pointer; flex-shrink: 0;
+    }
+    .editor-save-btn:disabled { opacity: 0.5; }
+    .editor-body { flex: 1; overflow-y: auto; padding: 20px 18px; }
+    .editor-textarea {
+      width: 100%; background: transparent; border: none; outline: none;
+      color: var(--text); font-size: 16px; font-family: inherit;
+      line-height: 1.8; resize: none;
+      min-height: calc(100vh - 120px);
+    }
+    .editor-footer {
+      padding: 10px 18px; font-size: 12px; color: var(--text3);
+      border-top: 1px solid var(--border); background: var(--surface); flex-shrink: 0;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .editor-delete-btn {
+      background: none; border: none; color: #ff6b6b;
+      font-size: 13px; cursor: pointer; padding: 2px 6px; border-radius: 6px;
+    }
+    .editor-delete-btn:hover { background: var(--surface2); }
+
+    /* ── SETTINGS ── */
     .settings-modal {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.6);
-      z-index: 300;
-      align-items: flex-end;
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,0.6); z-index: 300; align-items: flex-end;
     }
     .settings-modal.open { display: flex; }
-
     .settings-sheet {
-      background: var(--surface);
-      width: 100%;
-      border-radius: 20px 20px 0 0;
-      padding: 20px 20px 40px;
+      background: var(--surface); width: 100%;
+      border-radius: 20px 20px 0 0; padding: 20px 20px 40px;
       border-top: 1px solid var(--border);
     }
-
-    .settings-row {
-      display: flex; gap: 8px; align-items: center;
-      margin-bottom: 10px;
-    }
+    .settings-row { display: flex; gap: 8px; align-items: center; margin-bottom: 10px; }
     .settings-row input {
-      flex: 1; padding: 10px 12px;
-      background: var(--surface2);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      color: var(--text); font-size: 14px;
-      font-family: monospace; outline: none;
+      flex: 1; padding: 10px 12px; background: var(--surface2);
+      border: 1px solid var(--border); border-radius: 10px;
+      color: var(--text); font-size: 14px; font-family: monospace; outline: none;
     }
     .settings-row input:focus { border-color: var(--accent); }
     .settings-row button {
-      padding: 10px 16px;
-      background: var(--accent); color: #111;
-      border: none; border-radius: 10px;
-      font-size: 14px; font-weight: 600; cursor: pointer;
+      padding: 10px 16px; background: var(--accent); color: #111;
+      border: none; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer;
     }
     .key-status { font-size: 13px; margin-bottom: 14px; }
     .key-status.saved { color: #6bcb77; }
-
     .danger-btn {
-      width: 100%; padding: 11px;
-      background: none; color: #ff6b6b;
-      border: 1px solid #ff6b6b;
-      border-radius: 10px; font-size: 14px; cursor: pointer;
-      margin-top: 6px;
+      width: 100%; padding: 11px; background: none; color: #ff6b6b;
+      border: 1px solid #ff6b6b; border-radius: 10px;
+      font-size: 14px; cursor: pointer; margin-top: 6px;
     }
-
     .no-key-banner {
-      background: #3a2e00;
-      border: 1px solid #7a6000;
-      border-radius: 8px;
-      padding: 10px 14px;
-      font-size: 13px;
-      color: #ffd770;
-      margin-bottom: 14px;
-      text-align: center;
-      cursor: pointer;
+      background: #3a2e00; border: 1px solid #7a6000; border-radius: 8px;
+      padding: 10px 14px; font-size: 13px; color: #ffd770;
+      margin-bottom: 14px; text-align: center; cursor: pointer;
     }
   </style>
 </head>
@@ -430,7 +278,6 @@
   <!-- ══ SIDEBAR ══ -->
   <div class="sidebar" id="sidebar">
     <div class="sidebar-logo">📝 Smart Notes</div>
-
     <div style="padding-top:8px;">
       <div class="sidebar-item active" id="sb-pinned" onclick="setView('pinned')">
         <span class="icon">📌</span> Pinned Notes
@@ -439,19 +286,15 @@
         <span class="icon">💡</span> All Notes
       </div>
     </div>
-
     <div class="sidebar-divider"></div>
-
     <div class="sidebar-section-label">Categories</div>
     <div id="sidebarCats"></div>
-    <div style="padding: 4px 16px 8px;">
+    <div style="padding:4px 16px 8px;">
       <div class="sidebar-item" onclick="promptAddCat()">
         <span class="icon">＋</span> Add category
       </div>
     </div>
-
     <div class="sidebar-divider"></div>
-
     <div class="sidebar-item" id="sb-bin" onclick="setView('bin')">
       <span class="icon">🗑️</span> Bin
     </div>
@@ -463,7 +306,7 @@
   <!-- ══ HEADER ══ -->
   <div class="header">
     <button class="hamburger" onclick="toggleSidebar()">☰</button>
-    <span class="header-title" id="headerTitle">Pinned Notes</span>
+    <span class="header-title" id="headerTitle">Home</span>
     <button class="header-add-btn" onclick="openAddModal()" title="New note">＋</button>
   </div>
 
@@ -477,21 +320,16 @@
     <div class="modal">
       <div class="modal-handle"></div>
       <div class="modal-title">New Note</div>
-
       <div id="noKeyBanner" class="no-key-banner" onclick="closeAddModal();openSettings();" style="display:none;">
-        ⚠️ No API key — tap here to add it (needed for Ask Claude only)
+        ⚠️ No API key — tap here to add it (only needed for Ask Claude)
       </div>
-
       <textarea id="noteInput" placeholder="Type your note..."></textarea>
-
       <div class="modal-cat-label">Pick a category</div>
       <div class="modal-pills" id="modalPills"></div>
-
       <div class="new-cat-row" id="newCatRow">
         <input type="text" id="newCatInput" placeholder="Category name..." maxlength="30"/>
         <button onclick="confirmNewCat()">Add</button>
       </div>
-
       <div class="modal-actions">
         <button class="btn-cancel" onclick="closeAddModal()">Cancel</button>
         <button class="btn-save" id="saveBtn" onclick="saveNote()">Save</button>
@@ -500,23 +338,37 @@
     </div>
   </div>
 
+  <!-- ══ FULL SCREEN NOTE EDITOR ══ -->
+  <div class="note-editor" id="noteEditor">
+    <div class="editor-header">
+      <button class="editor-back" onclick="closeEditor()">‹</button>
+      <span class="editor-cat-badge" id="editorCatBadge"></span>
+      <button class="editor-save-btn" id="editorSaveBtn" onclick="saveEditorNote()">Save</button>
+    </div>
+    <div class="editor-body">
+      <textarea class="editor-textarea" id="editorTextarea" placeholder="Write your note..."></textarea>
+    </div>
+    <div class="editor-footer">
+      <span id="editorTime"></span>
+      <button class="editor-delete-btn" id="editorDeleteBtn">Move to bin 🗑️</button>
+    </div>
+  </div>
+
   <!-- ══ SETTINGS MODAL ══ -->
   <div class="settings-modal" id="settingsModal">
     <div class="settings-sheet">
       <div class="modal-handle"></div>
       <div class="modal-title">Settings</div>
-
       <div class="modal-cat-label" style="margin-bottom:8px;">Claude API Key</div>
       <p style="font-size:13px;color:var(--text3);margin-bottom:10px;line-height:1.5;">
         Get your key at <span style="color:var(--accent);">console.anthropic.com</span> → API Keys.<br>
-        Stored only on this device.
+        Stored only on this device. Never shared.
       </p>
       <div class="settings-row">
         <input type="password" id="keyInput" placeholder="sk-ant-..."/>
         <button onclick="saveKey()">Save</button>
       </div>
       <p class="key-status" id="keyStatus"></p>
-
       <button class="danger-btn" onclick="clearKey()">Remove API Key</button>
       <button class="danger-btn" onclick="clearAllNotes()">Delete All Notes</button>
       <button class="danger-btn" onclick="emptyBin()">Empty Bin</button>
@@ -526,47 +378,40 @@
   </div>
 
   <script>
-    /* ═══════════════════════════════
-       STORAGE KEYS
-    ═══════════════════════════════ */
-    const NOTES_KEY   = "sn_notes_v2";
-    const CATS_KEY    = "sn_cats_v2";
-    const API_KEY_KEY = "sn_apikey";
+    const NOTES_KEY    = "sn_notes_v2";
+    const CATS_KEY     = "sn_cats_v2";
+    const API_KEY_KEY  = "sn_apikey";
     const DEFAULT_CATS = ["Health", "Finances", "Movies", "Buy", "Learn", "Stocks"];
     const CLAUDE_LABEL = "Ask Claude";
 
-    let currentView  = "pinned"; // pinned | all | bin | cat:NAME
-    let selectedCat  = null;
+    let currentView = "pinned";
+    let selectedCat = null;
+    let editingNoteId = null;  // tracks which note is open in editor
 
     /* ── HELPERS ── */
     function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2,6); }
     function getApiKey() { return localStorage.getItem(API_KEY_KEY) || ""; }
-
     function loadNotes() {
-      try { return JSON.parse(localStorage.getItem(NOTES_KEY)) || []; }
-      catch { return []; }
+      try { return JSON.parse(localStorage.getItem(NOTES_KEY)) || []; } catch { return []; }
     }
     function saveNotesArr(arr) { localStorage.setItem(NOTES_KEY, JSON.stringify(arr)); }
-
     function loadCats() {
-      try {
-        const s = JSON.parse(localStorage.getItem(CATS_KEY));
-        return s && s.length ? s : [...DEFAULT_CATS];
-      } catch { return [...DEFAULT_CATS]; }
+      try { const s = JSON.parse(localStorage.getItem(CATS_KEY)); return s && s.length ? s : [...DEFAULT_CATS]; }
+      catch { return [...DEFAULT_CATS]; }
     }
     function saveCats(c) { localStorage.setItem(CATS_KEY, JSON.stringify(c)); }
-
     function timeAgo(ts) {
       const d = Math.floor((Date.now() - ts) / 1000);
-      if (d < 60)    return "just now";
-      if (d < 3600)  return Math.floor(d/60) + "m ago";
+      if (d < 60) return "just now";
+      if (d < 3600) return Math.floor(d/60) + "m ago";
       if (d < 86400) return Math.floor(d/3600) + "h ago";
       return Math.floor(d/86400) + "d ago";
     }
+    function escHtml(s) {
+      return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+    }
 
-    /* ═══════════════════════════════
-       SIDEBAR
-    ═══════════════════════════════ */
+    /* ── SIDEBAR ── */
     function toggleSidebar() {
       document.getElementById("sidebar").classList.toggle("open");
       document.getElementById("sidebarOverlay").classList.toggle("open");
@@ -578,11 +423,10 @@
 
     function renderSidebarCats() {
       const cats = loadCats();
-      const container = document.getElementById("sidebarCats");
-      container.innerHTML = cats.map(cat => {
+      document.getElementById("sidebarCats").innerHTML = cats.map(cat => {
         const safe = cat.replace(/\\/g,"\\\\").replace(/'/g,"\\'");
         const active = currentView === "cat:" + cat ? "active" : "";
-        return `<div class="sidebar-item ${active}" id="sb-cat-${safe}" onclick="setView('cat:${safe}')">
+        return `<div class="sidebar-item ${active}" onclick="setView('cat:${safe}')">
           <span class="icon">🏷️</span> ${cat}
         </div>`;
       }).join("");
@@ -591,86 +435,79 @@
     function setView(view) {
       currentView = view;
       closeSidebar();
-
-      // update active state
       document.querySelectorAll(".sidebar-item").forEach(el => el.classList.remove("active"));
-      if (view === "pinned") { document.getElementById("sb-pinned").classList.add("active"); document.getElementById("headerTitle").textContent = "Pinned Notes"; }
-      else if (view === "all") { document.getElementById("sb-all").classList.add("active"); document.getElementById("headerTitle").textContent = "All Notes"; }
-      else if (view === "bin") { document.getElementById("sb-bin").classList.add("active"); document.getElementById("headerTitle").textContent = "Bin"; }
-      else if (view.startsWith("cat:")) {
+      const titles = { pinned: "Home", all: "All Notes", bin: "Bin" };
+      if (titles[view]) {
+        document.getElementById("sb-" + view).classList.add("active");
+        document.getElementById("headerTitle").textContent = titles[view];
+      } else if (view.startsWith("cat:")) {
         const cat = view.slice(4);
         document.getElementById("headerTitle").textContent = cat;
-        const el = document.getElementById("sb-cat-" + cat);
-        if (el) el.classList.add("active");
       }
-
+      renderSidebarCats();
       renderMain();
     }
 
-    /* ═══════════════════════════════
-       MAIN RENDER
-    ═══════════════════════════════ */
+    /* ── MAIN RENDER ── */
     function renderMain() {
-      const all   = loadNotes();
-      const main  = document.getElementById("mainContent");
-
-      let notes = [];
+      const all  = loadNotes();
+      const main = document.getElementById("mainContent");
+      let html   = "";
 
       if (currentView === "pinned") {
-        notes = all.filter(n => n.pinned && !n.deleted);
+        // HOME: pinned section + all unpinned below
+        const pinned  = all.filter(n => n.pinned && !n.deleted);
+        const others  = all.filter(n => !n.pinned && !n.deleted);
+
+        if (pinned.length === 0 && others.length === 0) {
+          main.innerHTML = `<div class="empty-state">📝<br>No notes yet.<br>Tap + to add your first one!</div>`;
+          return;
+        }
+        if (pinned.length > 0) {
+          html += `<div class="section-label">📌 Pinned</div>
+                   <div class="notes-grid">${pinned.map(noteCard).join("")}</div>`;
+        }
+        if (others.length > 0) {
+          html += `<div class="section-label">${pinned.length > 0 ? "Others" : "Notes"}</div>
+                   <div class="notes-grid">${others.map(noteCard).join("")}</div>`;
+        }
+
       } else if (currentView === "all") {
-        notes = all.filter(n => !n.deleted);
+        const pinned = all.filter(n => n.pinned && !n.deleted);
+        const others = all.filter(n => !n.pinned && !n.deleted);
+        if (pinned.length === 0 && others.length === 0) {
+          main.innerHTML = `<div class="empty-state">📝<br>No notes yet.</div>`; return;
+        }
+        if (pinned.length) html += `<div class="section-label">📌 Pinned</div><div class="notes-grid">${pinned.map(noteCard).join("")}</div>`;
+        if (others.length) html += `<div class="section-label">Others</div><div class="notes-grid">${others.map(noteCard).join("")}</div>`;
+
       } else if (currentView === "bin") {
-        notes = all.filter(n => n.deleted);
+        const notes = all.filter(n => n.deleted);
+        if (!notes.length) { main.innerHTML = `<div class="empty-state">🗑️<br>Bin is empty.</div>`; return; }
+        html = `<div class="notes-grid">${notes.map(n => noteCard(n, true)).join("")}</div>`;
+
       } else if (currentView.startsWith("cat:")) {
-        const cat = currentView.slice(4);
-        notes = all.filter(n => n.cat === cat && !n.deleted);
-      }
-
-      if (notes.length === 0) {
-        const msgs = {
-          pinned: "📌<br>No pinned notes yet.<br>Tap the pin icon on any note.",
-          all:    "📝<br>No notes yet.<br>Tap + to add your first one!",
-          bin:    "🗑️<br>Bin is empty.",
-        };
-        const msg = currentView.startsWith("cat:")
-          ? "🏷️<br>No notes in this category yet."
-          : (msgs[currentView] || "No notes.");
-        main.innerHTML = `<div class="empty-state"><div class="empty-icon">${msg}</div></div>`;
-        return;
-      }
-
-      // For "all" view: show pinned first, then rest
-      let html = "";
-      if (currentView === "all") {
-        const pinned = notes.filter(n => n.pinned);
-        const rest   = notes.filter(n => !n.pinned);
-        if (pinned.length) {
-          html += `<div class="section-label">Pinned</div><div class="notes-grid">${pinned.map(noteCard).join("")}</div>`;
-        }
-        if (rest.length) {
-          html += `<div class="section-label">Others</div><div class="notes-grid">${rest.map(noteCard).join("")}</div>`;
-        }
-      } else {
+        const cat   = currentView.slice(4);
+        const notes = all.filter(n => n.cat === cat && !n.deleted);
+        if (!notes.length) { main.innerHTML = `<div class="empty-state">🏷️<br>No notes in this category yet.</div>`; return; }
         html = `<div class="notes-grid">${notes.map(noteCard).join("")}</div>`;
       }
 
       main.innerHTML = html;
     }
 
-    function noteCard(note) {
-      const safe = note.id;
-      const isBin = currentView === "bin";
-      const pinIcon = note.pinned ? "📌" : "🖇️";
+    function noteCard(note, inBin = false) {
+      const id = note.id;
       const pinClass = note.pinned ? "pin-active" : "";
+      const actions = inBin
+        ? `<button class="card-btn" onclick="event.stopPropagation();restoreNote('${id}')" title="Restore">↩️</button>
+           <button class="card-btn" onclick="event.stopPropagation();permDelete('${id}')" title="Delete forever">❌</button>`
+        : `<button class="card-btn ${pinClass}" onclick="event.stopPropagation();togglePin('${id}')" title="Pin">📌</button>
+           <button class="card-btn" onclick="event.stopPropagation();deleteNote('${id}')" title="Move to bin">🗑️</button>`;
 
-      const actions = isBin
-        ? `<button class="card-btn" onclick="restoreNote('${safe}')" title="Restore">↩️</button>
-           <button class="card-btn" onclick="permDelete('${safe}')" title="Delete forever">🗑️</button>`
-        : `<button class="card-btn ${pinClass}" onclick="togglePin('${safe}')" title="Pin">📌</button>
-           <button class="card-btn" onclick="deleteNote('${safe}')" title="Move to bin">🗑️</button>`;
+      const clickHandler = inBin ? "" : `onclick="openEditor('${id}')"`;
 
-      return `<div class="note-card ${note.pinned && !isBin ? 'pinned' : ''}">
+      return `<div class="note-card ${note.pinned && !inBin ? 'pinned' : ''}" ${clickHandler}>
         <div class="note-card-text">${escHtml(note.text)}</div>
         <div class="note-card-cat">${note.cat || ""}</div>
         <div class="note-card-time">${timeAgo(note.ts)}</div>
@@ -678,41 +515,71 @@
       </div>`;
     }
 
-    function escHtml(str) {
-      return str.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
-    }
-
-    /* ═══════════════════════════════
-       NOTE ACTIONS
-    ═══════════════════════════════ */
+    /* ── NOTE ACTIONS ── */
     function togglePin(id) {
-      const notes = loadNotes();
-      const n = notes.find(n => n.id === id);
+      const notes = loadNotes(), n = notes.find(n => n.id === id);
       if (n) { n.pinned = !n.pinned; saveNotesArr(notes); renderMain(); }
     }
-
     function deleteNote(id) {
-      const notes = loadNotes();
-      const n = notes.find(n => n.id === id);
+      const notes = loadNotes(), n = notes.find(n => n.id === id);
       if (n) { n.deleted = true; n.pinned = false; saveNotesArr(notes); renderMain(); }
     }
-
     function restoreNote(id) {
-      const notes = loadNotes();
-      const n = notes.find(n => n.id === id);
+      const notes = loadNotes(), n = notes.find(n => n.id === id);
       if (n) { n.deleted = false; saveNotesArr(notes); renderMain(); }
     }
-
     function permDelete(id) {
-      if (!confirm("Delete this note forever?")) return;
-      const notes = loadNotes().filter(n => n.id !== id);
-      saveNotesArr(notes);
+      if (!confirm("Delete forever?")) return;
+      saveNotesArr(loadNotes().filter(n => n.id !== id));
       renderMain();
     }
 
-    /* ═══════════════════════════════
-       ADD NOTE MODAL
-    ═══════════════════════════════ */
+    /* ── FULL SCREEN EDITOR ── */
+    function openEditor(id) {
+      const notes = loadNotes();
+      const note  = notes.find(n => n.id === id);
+      if (!note) return;
+
+      editingNoteId = id;
+      document.getElementById("editorTextarea").value = note.text;
+      document.getElementById("editorCatBadge").textContent = note.cat || "Uncategorised";
+      document.getElementById("editorTime").textContent = "Edited " + timeAgo(note.ts);
+
+      const deleteBtn = document.getElementById("editorDeleteBtn");
+      deleteBtn.onclick = () => {
+        deleteNote(id);
+        closeEditor();
+      };
+
+      document.getElementById("noteEditor").classList.add("open");
+      setTimeout(() => document.getElementById("editorTextarea").focus(), 100);
+    }
+
+    function closeEditor() {
+      document.getElementById("noteEditor").classList.remove("open");
+      editingNoteId = null;
+      renderMain();
+    }
+
+    function saveEditorNote() {
+      const btn  = document.getElementById("editorSaveBtn");
+      const text = document.getElementById("editorTextarea").value.trim();
+      if (!text || !editingNoteId) return;
+
+      btn.disabled = true;
+      const notes = loadNotes();
+      const note  = notes.find(n => n.id === editingNoteId);
+      if (note) {
+        note.text = text;
+        note.ts   = Date.now();
+        saveNotesArr(notes);
+      }
+      btn.disabled = false;
+      document.getElementById("editorTime").textContent = "Saved just now";
+      setTimeout(closeEditor, 600);
+    }
+
+    /* ── ADD NOTE MODAL ── */
     function openAddModal() {
       selectedCat = null;
       document.getElementById("noteInput").value = "";
@@ -725,29 +592,21 @@
       document.getElementById("addModal").classList.add("open");
       setTimeout(() => document.getElementById("noteInput").focus(), 100);
     }
-
-    function closeAddModal() {
-      document.getElementById("addModal").classList.remove("open");
-    }
+    function closeAddModal() { document.getElementById("addModal").classList.remove("open"); }
 
     function renderModalPills() {
       const cats = loadCats();
-      const container = document.getElementById("modalPills");
       let html = cats.map(cat => {
         const safe = cat.replace(/\\/g,"\\\\").replace(/'/g,"\\'");
         const sel  = selectedCat === cat ? "selected" : "";
         return `<button class="mpill ${sel}" onclick="selectModalCat('${safe}')">${cat}</button>`;
       }).join("");
-      const claudeSel = selectedCat === CLAUDE_LABEL ? "selected" : "";
-      html += `<button class="mpill claude ${claudeSel}" onclick="selectModalCat('${CLAUDE_LABEL}')">✦ Ask Claude</button>`;
+      html += `<button class="mpill claude ${selectedCat===CLAUDE_LABEL?"selected":""}" onclick="selectModalCat('${CLAUDE_LABEL}')">✦ Ask Claude</button>`;
       html += `<button class="add-pill-btn" onclick="toggleNewCatRow()">+</button>`;
-      container.innerHTML = html;
+      document.getElementById("modalPills").innerHTML = html;
     }
 
-    function selectModalCat(cat) {
-      selectedCat = cat;
-      renderModalPills();
-    }
+    function selectModalCat(cat) { selectedCat = cat; renderModalPills(); }
 
     function toggleNewCatRow() {
       const row = document.getElementById("newCatRow");
@@ -769,15 +628,9 @@
       renderSidebarCats();
     }
 
-    function promptAddCat() {
-      closeSidebar();
-      openAddModal();
-      setTimeout(toggleNewCatRow, 300);
-    }
+    function promptAddCat() { closeSidebar(); openAddModal(); setTimeout(toggleNewCatRow, 300); }
 
-    /* ═══════════════════════════════
-       SAVE NOTE
-    ═══════════════════════════════ */
+    /* ── SAVE NOTE ── */
     async function saveNote() {
       const input  = document.getElementById("noteInput");
       const btn    = document.getElementById("saveBtn");
@@ -803,43 +656,23 @@
       notes.unshift({ id: uid(), text, cat: category, ts: Date.now(), pinned: false, deleted: false });
       saveNotesArr(notes);
 
-      input.value = "";
-      selectedCat = null;
+      input.value = ""; selectedCat = null;
       status.className = "success";
       status.textContent = "Saved under: " + category;
-      renderSidebarCats();
-      renderMain();
+      renderSidebarCats(); renderMain();
 
-      setTimeout(() => {
-        closeAddModal();
-        status.textContent = "";
-        status.className = "";
-      }, 1000);
-
+      setTimeout(() => { closeAddModal(); status.textContent = ""; status.className = ""; }, 1000);
       btn.disabled = false;
     }
 
-    /* ═══════════════════════════════
-       CLAUDE API
-    ═══════════════════════════════ */
+    /* ── CLAUDE API ── */
     async function askClaude(noteText) {
       const apiKey = getApiKey();
       if (!apiKey) throw new Error("No API key. Go to Settings to add it.");
-
       const notes    = loadNotes().filter(n => !n.deleted);
       const existing = [...new Set(notes.map(n => n.cat).filter(Boolean))];
-      const catList  = existing.length
-        ? `Existing categories: ${existing.join(", ")}.`
-        : "No existing categories yet.";
-
-      const prompt = `You are a note organizer. ${catList}
-
-The user wrote: "${noteText}"
-
-Pick or create a category.
-- Use an existing one if it fits.
-- Otherwise create a short name (2-3 words max).
-- Reply with ONLY the category name. No punctuation at end.`;
+      const catList  = existing.length ? `Existing categories: ${existing.join(", ")}.` : "No existing categories yet.";
+      const prompt   = `You are a note organizer. ${catList}\n\nThe user wrote: "${noteText}"\n\nPick or create a category.\n- Use an existing one if it fits.\n- Otherwise create a short name (2-3 words max).\n- Reply with ONLY the category name. No punctuation at end.`;
 
       const res = await fetch("https://api.anthropic.com/v1/messages", {
         method: "POST",
@@ -849,43 +682,25 @@ Pick or create a category.
           "anthropic-version": "2023-06-01",
           "anthropic-dangerous-direct-browser-access": "true"
         },
-        body: JSON.stringify({
-          model: "claude-haiku-4-5-20251001",
-          max_tokens: 20,
-          messages: [{ role: "user", content: prompt }]
-        })
+        body: JSON.stringify({ model: "claude-haiku-4-5-20251001", max_tokens: 20, messages: [{ role: "user", content: prompt }] })
       });
 
-      if (!res.ok) {
-        const err = await res.json();
-        throw new Error(err?.error?.message || "API error");
-      }
+      if (!res.ok) { const err = await res.json(); throw new Error(err?.error?.message || "API error"); }
       const data = await res.json();
       const raw  = data?.content?.[0]?.text;
       if (!raw) throw new Error("Claude returned empty response.");
       return raw.trim().replace(/[.!?]$/, "");
     }
 
-    /* ═══════════════════════════════
-       SETTINGS
-    ═══════════════════════════════ */
+    /* ── SETTINGS ── */
     function openSettings() {
       const k = getApiKey();
-      if (k) {
-        document.getElementById("keyInput").value = k;
-        document.getElementById("keyStatus").textContent = "✓ API key saved on this device";
-        document.getElementById("keyStatus").className = "key-status saved";
-      } else {
-        document.getElementById("keyStatus").textContent = "";
-        document.getElementById("keyStatus").className = "key-status";
-      }
+      document.getElementById("keyInput").value = k || "";
+      document.getElementById("keyStatus").textContent = k ? "✓ API key saved on this device" : "";
+      document.getElementById("keyStatus").className = k ? "key-status saved" : "key-status";
       document.getElementById("settingsModal").classList.add("open");
     }
-
-    function closeSettings() {
-      document.getElementById("settingsModal").classList.remove("open");
-    }
-
+    function closeSettings() { document.getElementById("settingsModal").classList.remove("open"); }
     function saveKey() {
       const val = document.getElementById("keyInput").value.trim();
       if (!val) { alert("Paste your API key first."); return; }
@@ -893,43 +708,30 @@ Pick or create a category.
       document.getElementById("keyStatus").textContent = "✓ Key saved!";
       document.getElementById("keyStatus").className = "key-status saved";
     }
-
     function clearKey() {
-      if (!confirm("Remove API key from this device?")) return;
+      if (!confirm("Remove API key?")) return;
       localStorage.removeItem(API_KEY_KEY);
       document.getElementById("keyInput").value = "";
       document.getElementById("keyStatus").textContent = "Key removed.";
       document.getElementById("keyStatus").className = "key-status";
     }
-
     function clearAllNotes() {
-      if (!confirm("Delete ALL notes permanently? This cannot be undone.")) return;
-      localStorage.removeItem(NOTES_KEY);
-      closeSettings();
-      renderMain();
+      if (!confirm("Delete ALL notes permanently?")) return;
+      localStorage.removeItem(NOTES_KEY); closeSettings(); renderMain();
     }
-
     function emptyBin() {
       if (!confirm("Permanently delete everything in the bin?")) return;
-      const notes = loadNotes().filter(n => !n.deleted);
-      saveNotesArr(notes);
+      saveNotesArr(loadNotes().filter(n => !n.deleted));
       if (currentView === "bin") renderMain();
       closeSettings();
     }
 
-    /* ═══════════════════════════════
-       KEYBOARD
-    ═══════════════════════════════ */
-    document.getElementById("newCatInput").addEventListener("keydown", e => {
-      if (e.key === "Enter") confirmNewCat();
-    });
+    /* ── KEYBOARD ── */
+    document.getElementById("newCatInput").addEventListener("keydown", e => { if (e.key==="Enter") confirmNewCat(); });
 
-    /* ═══════════════════════════════
-       INIT
-    ═══════════════════════════════ */
+    /* ── INIT ── */
     setView("pinned");
     renderSidebarCats();
   </script>
-
 </body>
 </html>
