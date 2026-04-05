@@ -455,7 +455,13 @@ function showDeleteConfirm(id){
   document.getElementById("deleteConfirm").classList.add("open");
 }
 function closeDeleteConfirm(){document.getElementById("deleteConfirm").classList.remove("open");pendingDeleteId=null;}
-function confirmDelete(){if(pendingDeleteId){deleteNote(pendingDeleteId);closeDeleteConfirm();}}
+function confirmDelete(){
+  if(!pendingDeleteId)return;
+  const wasEditing = editingNoteId === pendingDeleteId;
+  if(wasEditing)closeEditor();
+  deleteNote(pendingDeleteId);
+  closeDeleteConfirm();
+}
 
 /* NOTE ACTIONS */
 function deleteNote(id){const notes=loadNotes(),n=notes.find(n=>n.id===id);if(n){n.deleted=true;n.pinned=false;saveNotesArr(notes);renderMain();}}
@@ -485,7 +491,10 @@ function closeEditor(){
   document.getElementById("noteEditor").classList.remove("open");
   clearTimeout(autoSaveTimer);editingNoteId=null;renderMain();
 }
-function deleteFromEditor(){if(!editingNoteId)return;const id=editingNoteId;closeEditor();deleteNote(id);}
+function deleteFromEditor(){
+  if(!editingNoteId)return;
+  showDeleteConfirm(editingNoteId);
+}
 function toggleEditorPin(){
   if(!editingNoteId)return;
   const notes=loadNotes(),note=notes.find(n=>n.id===editingNoteId);if(!note)return;
