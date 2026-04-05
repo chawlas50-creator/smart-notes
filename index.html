@@ -248,18 +248,7 @@
 <div class="note-editor" id="noteEditor">
   <div class="editor-header">
     <button class="editor-back" onclick="closeEditor()">‹</button>
-    <div style="position:relative;flex:1;min-width:0;">
-      <span class="editor-cat-badge" id="editorCatBadge" onclick="toggleCatDropdown()">📥 Unsorted ▾</span>
-      <div id="catDropdown" style="display:none;position:absolute;top:calc(100% + 6px);left:0;width:220px;background:var(--surface);border:1px solid var(--border);border-radius:12px;z-index:600;overflow:hidden;box-shadow:0 8px 24px rgba(0,0,0,.5);max-height:300px;overflow-y:auto;">
-        <div id="catDropdownList"></div>
-        <div style="border-top:1px solid var(--border);padding:10px 14px;">
-          <div id="catDropdownAddRow" style="display:flex;gap:8px;">
-            <input id="catDropdownInput" type="text" placeholder="New category..." maxlength="30" style="flex:1;padding:7px 10px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:13px;outline:none;font-family:inherit;" onclick="event.stopPropagation()"/>
-            <button onclick="confirmDropdownNewCat()" style="padding:7px 12px;background:var(--accent);color:#111;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;">Add</button>
-          </div>
-        </div>
-      </div>
-    </div>
+    <span class="editor-cat-badge" id="editorCatBadge" onclick="toggleCatDropdown()">📥 Unsorted ▾</span>
     <button class="editor-top-btn" id="editorPinBtn" onclick="toggleEditorPin()">📌</button>
     <button class="editor-top-btn" id="editorTaskBtn" onclick="toggleEditorTask()">☐</button>
     <button class="editor-top-btn del" onclick="deleteFromEditor()">🗑️</button>
@@ -268,6 +257,15 @@
   <div class="editor-body">
     <input class="editor-title" type="text" id="editorTitle" placeholder="Title..."/>
     <textarea class="editor-textarea" id="editorTextarea" placeholder="Write your note..."></textarea>
+  </div>
+</div>
+
+<!-- CAT DROPDOWN — fixed position, outside editor so it's never clipped -->
+<div id="catDropdown" style="display:none;position:fixed;top:64px;left:16px;width:240px;background:var(--surface);border:1px solid var(--border);border-radius:14px;z-index:9999;box-shadow:0 8px 32px rgba(0,0,0,.7);max-height:320px;overflow-y:auto;">
+  <div id="catDropdownList"></div>
+  <div style="border-top:1px solid var(--border);padding:10px 14px;display:flex;gap:8px;">
+    <input id="catDropdownInput" type="text" placeholder="New category..." maxlength="30" style="flex:1;padding:7px 10px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:13px;outline:none;font-family:inherit;" onclick="event.stopPropagation()"/>
+    <button onclick="confirmDropdownNewCat()" style="padding:7px 12px;background:var(--accent);color:#111;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;">Add</button>
   </div>
 </div>
 
