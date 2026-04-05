@@ -436,7 +436,7 @@ function noteCard(note,inBin=false,query=""){
   const bodyHtml=query?highlightText(note.text,query):escHtml(note.text);
   const unsorted=note.cat==="Unsorted"&&note.aiPending?`<div class="unsorted-badge">⏳ AI sorting...</div>`:"";
   // colored tag — no text label, just icon + name in pill  (name kept for context but category TEXT row removed)
-  const tagHtml=`<div class="cat-tag" style="background:${color}22;color:${color};border:1px solid ${color}66;">${getCatIcon(note.cat||"")} ${escHtml(note.cat||"Unsorted")}</div>`;
+  const tagHtml=`<div class="cat-tag" style="background:${color}22;color:${color};border:1px solid ${color}66;" title="${escHtml(note.cat||"Unsorted")}">${getCatIcon(note.cat||"")}</div>`;
   let cardClass="note-card"+(note.pinned&&!inBin?" pinned":"")+(note.isTask?" is-task":"");
   const binActions=inBin?`<div style="display:flex;gap:6px;margin-top:8px;"><button style="flex:1;padding:8px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text2);font-size:13px;cursor:pointer;" onclick="event.stopPropagation();restoreNote('${id}')">↩️ Restore</button><button style="flex:1;padding:8px;background:#3a1010;border:1px solid #6a2020;border-radius:8px;color:#ff6b6b;font-size:13px;cursor:pointer;" onclick="event.stopPropagation();permDelete('${id}')">❌ Delete</button></div>`:"";
   const click=inBin?"":`onclick="openEditor('${id}')"`;
