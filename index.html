@@ -9,16 +9,14 @@
   <title>Smart Notes</title>
   <style>
     :root {
-      --bg: #1a1a1a;
-      --surface: #232323;
-      --surface2: #2c2c2c;
-      --border: #3a3a3a;
-      --text: #e8e8e8;
+      --bg: #111111;
+      --surface: #1e1e1e;
+      --surface2: #2a2a2a;
+      --border: #333333;
+      --text: #f0f0f0;
       --text2: #aaaaaa;
       --text3: #666666;
       --accent: #8ab4f8;
-      --task-color: #6bcb77;
-      --pin-color: #f4c542;
       --header-h: 56px;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -28,119 +26,118 @@
       height: 100vh; overflow: hidden; display: flex; flex-direction: column;
     }
 
-    /* ── HEADER ── */
-    .header {
-      height: var(--header-h); background: var(--surface);
-      border-bottom: 1px solid var(--border);
-      display: flex; align-items: center;
-      padding: 0 16px; gap: 10px; flex-shrink: 0; z-index: 100;
+    /* ── CATEGORY COLOR SYSTEM ── */
+    /* Each category gets a color via data-color attribute on cards */
+    .cat-tag {
+      display: inline-flex; align-items: center; gap: 5px;
+      font-size: 11px; font-weight: 600;
+      border-radius: 20px; padding: 3px 9px;
+      margin-top: 6px; white-space: nowrap;
     }
+
+    /* ── HEADER ── */
+    .header { height: var(--header-h); background: var(--surface); border-bottom: 1px solid var(--border); display: flex; align-items: center; padding: 0 16px; gap: 10px; flex-shrink: 0; z-index: 100; }
     .hamburger { background: none; border: none; color: var(--text2); font-size: 20px; cursor: pointer; padding: 6px; border-radius: 50%; }
     .hamburger:hover { background: var(--surface2); }
-    .header-title { font-size: 18px; font-weight: 500; color: var(--text); flex: 1; }
-    .search-wrap {
-      display: flex; align-items: center;
-      background: var(--surface2); border: 1px solid var(--border);
-      border-radius: 24px; padding: 6px 12px; gap: 8px; flex: 1; max-width: 200px;
-    }
+    .header-title { font-size: 18px; font-weight: 600; color: var(--text); flex: 1; }
+    .search-wrap { display: flex; align-items: center; background: var(--surface2); border: 1px solid var(--border); border-radius: 24px; padding: 6px 12px; gap: 8px; flex: 1; max-width: 200px; }
     .search-wrap input { background: none; border: none; outline: none; color: var(--text); font-size: 14px; font-family: inherit; width: 100%; }
     .search-wrap input::placeholder { color: var(--text3); }
     .search-icon { color: var(--text3); font-size: 14px; }
     .search-clear { background: none; border: none; color: var(--text3); font-size: 16px; cursor: pointer; padding: 0; line-height: 1; display: none; }
     .search-clear.visible { display: block; }
 
-    /* ── BODY ── */
-    .body { display: flex; flex: 1; overflow: hidden; }
-
     /* ── SIDEBAR ── */
-    .sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 200; }
+    .sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 200; }
     .sidebar-overlay.open { display: block; }
-    .sidebar {
-      position: fixed; top: 0; left: 0; bottom: 0; width: 270px;
-      background: var(--surface); border-right: 1px solid var(--border);
-      z-index: 201; display: flex; flex-direction: column;
-      transform: translateX(-100%); transition: transform 0.25s ease; overflow-y: auto;
-    }
+    .sidebar { position: fixed; top: 0; left: 0; bottom: 0; width: 270px; background: var(--surface); border-right: 1px solid var(--border); z-index: 201; display: flex; flex-direction: column; transform: translateX(-100%); transition: transform 0.25s ease; overflow-y: auto; }
     .sidebar.open { transform: translateX(0); }
-    .sidebar-logo { padding: 20px 16px 12px; font-size: 20px; font-weight: 600; color: var(--text); border-bottom: 1px solid var(--border); }
+    .sidebar-logo { padding: 20px 16px 12px; font-size: 20px; font-weight: 700; color: var(--text); border-bottom: 1px solid var(--border); }
     .sidebar-section-label { font-size: 11px; font-weight: 600; color: var(--text3); text-transform: uppercase; letter-spacing: 0.08em; padding: 16px 16px 6px; }
     .sidebar-item { display: flex; align-items: center; gap: 12px; padding: 11px 16px; cursor: pointer; border-radius: 0 24px 24px 0; margin-right: 12px; font-size: 15px; color: var(--text2); transition: background 0.15s; }
     .sidebar-item:hover { background: var(--surface2); }
-    .sidebar-item.active { background: #394457; color: var(--accent); }
+    .sidebar-item.active { background: #1e2d42; color: var(--accent); }
     .sidebar-item .icon { font-size: 17px; width: 22px; text-align: center; flex-shrink: 0; }
     .sidebar-divider { height: 1px; background: var(--border); margin: 8px 0; }
     .sidebar-cat-row { display: flex; align-items: center; margin-right: 12px; }
     .sidebar-cat-row .sidebar-item { flex: 1; margin-right: 0; border-radius: 0 24px 24px 0; }
-    .cat-delete-btn { background: none; border: none; color: var(--text3); font-size: 15px; cursor: pointer; padding: 8px 10px 8px 4px; opacity: 0; transition: opacity 0.15s; }
+    .cat-color-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+    .cat-delete-btn { background: none; border: none; color: var(--text3); font-size: 15px; cursor: pointer; padding: 8px 10px 8px 4px; opacity: 0; }
     .sidebar-cat-row:hover .cat-delete-btn { opacity: 1; }
     .cat-delete-btn:hover { color: #ff6b6b; }
 
     /* ── MAIN ── */
+    .body { display: flex; flex: 1; overflow: hidden; }
     .main { flex: 1; overflow-y: auto; padding: 16px 16px 90px; }
-    .section-label { font-size: 11px; font-weight: 600; color: var(--text3); text-transform: uppercase; letter-spacing: 0.08em; margin: 8px 0 10px; }
+
+    /* ── SECTION / TIMELINE LABELS ── */
+    .section-label { font-size: 11px; font-weight: 700; color: var(--text3); text-transform: uppercase; letter-spacing: 0.1em; margin: 16px 0 10px; }
+    .section-label:first-child { margin-top: 4px; }
+    .timeline-label { font-size: 18px; font-weight: 700; color: var(--text); margin: 24px 0 10px; }
+    .timeline-label:first-child { margin-top: 4px; }
 
     /* ── NOTE GRID ── */
-    .notes-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 20px; }
+    .notes-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 4px; }
 
+    /* ── NOTE CARD ── */
     .note-card {
       background: var(--surface); border: 1px solid var(--border);
-      border-radius: 10px; padding: 12px;
+      border-radius: 12px; padding: 12px 12px 10px;
       cursor: pointer; transition: border-color 0.15s, background 0.15s;
       user-select: none; -webkit-user-select: none;
+      border-left-width: 3px;
+      display: flex; flex-direction: column;
     }
     .note-card:hover { border-color: #555; }
-    /* pinned: subtle yellow tint */
-    .note-card.pinned { background: #1f1d14; border-color: #4a4520; }
-    /* task: subtle green tint */
-    .note-card.is-task { background: #141f16; border-color: #2a4a2e; }
-    /* long-press feedback */
-    .note-card.pressing { background: #2a1a1a; border-color: #ff6b6b; }
+    .note-card.pinned { background: #1c1a0f; }
+    .note-card.is-task { background: #0f1c11; }
+    .note-card.pressing { opacity: 0.6; transform: scale(0.97); transition: all 0.1s; }
 
-    .note-card-title { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .note-card-text { font-size: 12px; color: var(--text2); line-height: 1.5; word-break: break-word; white-space: pre-wrap; max-height: 80px; overflow: hidden; }
+    .note-card-title { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .note-card-text { font-size: 13px; color: var(--text2); line-height: 1.5; word-break: break-word; white-space: pre-wrap; max-height: 72px; overflow: hidden; flex: 1; }
     .note-card-text .highlight { background: #6a5000; color: #ffd770; border-radius: 2px; }
-    .note-card-cat { font-size: 11px; color: var(--text3); margin-top: 6px; }
-    .note-card-time { font-size: 11px; color: var(--text3); margin-top: 2px; }
+    .note-card-time { font-size: 11px; color: var(--text3); margin-top: 6px; }
     .unsorted-badge { font-size: 10px; color: #ff9f43; background: #3d2a00; border-radius: 4px; padding: 1px 6px; display: inline-block; margin-bottom: 4px; }
 
     .empty-state { text-align: center; color: var(--text3); padding: 4rem 1rem; font-size: 15px; line-height: 2; }
     .search-results-label { font-size: 13px; color: var(--text3); margin-bottom: 12px; }
 
     /* ── FAB ── */
-    .fab { position: fixed; bottom: 28px; right: 24px; width: 56px; height: 56px; border-radius: 50%; background: var(--accent); color: #111; border: none; font-size: 28px; cursor: pointer; z-index: 150; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 16px rgba(0,0,0,0.4); transition: transform 0.15s; }
-    .fab:active { transform: scale(0.93); }
+    .fab { position: fixed; bottom: 28px; right: 24px; width: 56px; height: 56px; border-radius: 50%; background: var(--accent); color: #111; border: none; font-size: 30px; cursor: pointer; z-index: 150; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 20px rgba(138,180,248,0.3); transition: transform 0.15s; }
+    .fab:active { transform: scale(0.92); }
+
+    /* ── MODALS BASE ── */
+    .sheet-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.65); z-index: 300; align-items: flex-end; }
+    .sheet-overlay.open { display: flex; }
+    .sheet { background: var(--surface); width: 100%; border-radius: 22px 22px 0 0; padding: 20px 20px 40px; border-top: 1px solid var(--border); max-height: 92vh; overflow-y: auto; }
+    .sheet-handle { width: 36px; height: 4px; background: var(--border); border-radius: 2px; margin: 0 auto 18px; }
+    .sheet-title { font-size: 17px; font-weight: 700; color: var(--text); margin-bottom: 16px; }
 
     /* ── ADD NOTE MODAL ── */
-    .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 300; align-items: flex-end; }
-    .modal-overlay.open { display: flex; }
-    .modal { background: var(--surface); width: 100%; border-radius: 20px 20px 0 0; padding: 20px 20px 36px; border-top: 1px solid var(--border); max-height: 90vh; overflow-y: auto; }
-    .modal-handle { width: 36px; height: 4px; background: var(--border); border-radius: 2px; margin: 0 auto 16px; }
-    .modal-title { font-size: 16px; font-weight: 600; color: var(--text); margin-bottom: 14px; }
-    .modal input.title-input { width: 100%; background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; color: var(--text); font-size: 15px; font-weight: 600; font-family: inherit; padding: 10px 12px; outline: none; margin-bottom: 8px; }
+    .modal input.title-input { width: 100%; background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; color: var(--text); font-size: 16px; font-weight: 600; font-family: inherit; padding: 10px 12px; outline: none; margin-bottom: 8px; }
     .modal input.title-input:focus { border-color: var(--accent); }
     .modal input.title-input::placeholder { color: var(--text3); font-weight: 400; }
     .modal textarea { width: 100%; min-height: 90px; background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; color: var(--text); font-size: 14px; font-family: inherit; padding: 10px 12px; resize: none; outline: none; }
     .modal textarea:focus { border-color: var(--accent); }
-    .task-toggle-row { display: flex; align-items: center; gap: 10px; margin: 10px 0 4px; }
-    .task-toggle-btn { display: flex; align-items: center; gap: 6px; background: var(--surface2); border: 1px solid var(--border); border-radius: 20px; padding: 6px 14px; font-size: 13px; color: var(--text2); cursor: pointer; }
-    .task-toggle-btn.active { background: #1a3d20; border-color: var(--task-color); color: var(--task-color); }
-    .modal-cat-label { font-size: 12px; color: var(--text2); margin: 10px 0 6px; }
+    .task-toggle-btn { display: inline-flex; align-items: center; gap: 6px; background: var(--surface2); border: 1px solid var(--border); border-radius: 20px; padding: 7px 14px; font-size: 13px; color: var(--text2); cursor: pointer; margin: 10px 0 4px; }
+    .task-toggle-btn.active { background: #0f2214; border-color: #6bcb77; color: #6bcb77; }
+    .modal-cat-label { font-size: 12px; color: var(--text2); margin: 10px 0 7px; }
     .modal-pills { display: flex; flex-wrap: wrap; gap: 7px; align-items: center; }
-    .mpill { padding: 5px 13px; border-radius: 20px; font-size: 13px; font-weight: 500; border: 1px solid var(--border); background: var(--surface2); color: var(--text2); cursor: pointer; white-space: nowrap; }
-    .mpill.selected { background: var(--accent); color: #111; border-color: var(--accent); }
+    .mpill { padding: 6px 13px; border-radius: 20px; font-size: 13px; font-weight: 500; border: 1px solid var(--border); background: var(--surface2); color: var(--text2); cursor: pointer; white-space: nowrap; }
+    .mpill.selected { color: #111; border-color: transparent; }
     .mpill.claude { border-color: #a259f7; color: #c084fc; background: #1e1535; }
     .mpill.claude.selected { background: #a259f7; color: #fff; border-color: #a259f7; }
-    .add-pill-btn { width: 28px; height: 28px; border-radius: 50%; border: 1px dashed var(--border); background: none; color: var(--text3); font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+    .add-pill-btn { width: 30px; height: 30px; border-radius: 50%; border: 1px dashed var(--border); background: none; color: var(--text3); font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
     .add-pill-btn:hover { border-color: var(--accent); color: var(--accent); }
     .new-cat-row { display: none; gap: 8px; margin-top: 10px; }
     .new-cat-row.visible { display: flex; }
-    .new-cat-row input { flex: 1; padding: 8px 12px; background: var(--surface2); border: 1px solid var(--accent); border-radius: 8px; color: var(--text); font-size: 14px; outline: none; font-family: inherit; }
-    .new-cat-row button { padding: 8px 14px; background: var(--accent); color: #111; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; }
-    .modal-actions { display: flex; gap: 10px; margin-top: 14px; }
-    .btn-save { flex: 1; padding: 12px; background: var(--accent); color: #111; border: none; border-radius: 10px; font-size: 15px; font-weight: 600; cursor: pointer; }
+    .new-cat-row input { flex: 1; padding: 9px 12px; background: var(--surface2); border: 1px solid var(--accent); border-radius: 8px; color: var(--text); font-size: 14px; outline: none; font-family: inherit; }
+    .new-cat-row button { padding: 9px 14px; background: var(--accent); color: #111; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; }
+    .modal-actions { display: flex; gap: 10px; margin-top: 16px; }
+    .btn-save { flex: 1; padding: 13px; background: var(--accent); color: #111; border: none; border-radius: 12px; font-size: 15px; font-weight: 700; cursor: pointer; }
     .btn-save:disabled { opacity: 0.5; }
-    .btn-cancel { padding: 12px 18px; background: var(--surface2); color: var(--text2); border: 1px solid var(--border); border-radius: 10px; font-size: 15px; cursor: pointer; }
-    #modalStatus { font-size: 13px; text-align: center; min-height: 18px; margin-top: 8px; color: var(--text2); }
+    .btn-cancel { padding: 13px 18px; background: var(--surface2); color: var(--text2); border: 1px solid var(--border); border-radius: 12px; font-size: 15px; cursor: pointer; }
+    #modalStatus { font-size: 13px; text-align: center; min-height: 18px; margin-top: 8px; }
     #modalStatus.error { color: #ff6b6b; }
     #modalStatus.success { color: #6bcb77; }
 
@@ -148,84 +145,55 @@
     .note-editor { display: none; position: fixed; inset: 0; background: var(--bg); z-index: 500; flex-direction: column; }
     .note-editor.open { display: flex; }
 
-    .editor-header { display: flex; align-items: center; gap: 10px; padding: 0 14px; height: var(--header-h); background: var(--surface); border-bottom: 1px solid var(--border); flex-shrink: 0; }
-    .editor-back { background: none; border: none; color: var(--accent); font-size: 22px; cursor: pointer; padding: 4px 6px 4px 0; line-height: 1; flex-shrink: 0; }
-
-    /* category badge — tappable to change */
-    .editor-cat-badge {
-      font-size: 12px; color: var(--text2);
-      background: var(--surface2); border: 1px solid var(--border);
-      border-radius: 20px; padding: 5px 12px; flex: 1;
-      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-      cursor: pointer; transition: border-color 0.15s;
-    }
+    /* editor top bar */
+    .editor-header { display: flex; align-items: center; gap: 8px; padding: 0 14px; height: var(--header-h); background: var(--surface); border-bottom: 1px solid var(--border); flex-shrink: 0; }
+    .editor-back { background: none; border: none; color: var(--accent); font-size: 24px; cursor: pointer; padding: 4px 6px 4px 0; line-height: 1; flex-shrink: 0; }
+    .editor-cat-badge { font-size: 12px; color: var(--text2); background: var(--surface2); border: 1px solid var(--border); border-radius: 20px; padding: 5px 12px; flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer; }
     .editor-cat-badge:hover { border-color: var(--accent); }
+
+    /* top action buttons */
+    .editor-top-btn { background: none; border: 1px solid var(--border); border-radius: 20px; padding: 5px 11px; font-size: 13px; color: var(--text2); cursor: pointer; white-space: nowrap; flex-shrink: 0; }
+    .editor-top-btn:hover { border-color: var(--text2); }
+    .editor-top-btn.pin-on { border-color: #f4c542; color: #f4c542; }
+    .editor-top-btn.task-on { border-color: #6bcb77; color: #6bcb77; }
+    .editor-top-btn.del { border-color: #4a2020; color: #ff6b6b; }
+    .editor-top-btn.del:hover { background: #2a1010; }
 
     .editor-autosave { font-size: 12px; color: var(--text3); flex-shrink: 0; }
 
     .editor-body { flex: 1; overflow-y: auto; padding: 20px 18px; }
-    .editor-title { width: 100%; background: transparent; border: none; outline: none; color: var(--text); font-size: 20px; font-weight: 600; font-family: inherit; margin-bottom: 12px; border-bottom: 1px solid var(--border); padding-bottom: 10px; }
+    .editor-title { width: 100%; background: transparent; border: none; outline: none; color: var(--text); font-size: 22px; font-weight: 700; font-family: inherit; margin-bottom: 14px; border-bottom: 1px solid var(--border); padding-bottom: 12px; }
     .editor-title::placeholder { color: var(--text3); }
-    .editor-textarea { width: 100%; background: transparent; border: none; outline: none; color: var(--text); font-size: 15px; font-family: inherit; line-height: 1.8; resize: none; min-height: calc(100vh - 220px); }
+    .editor-textarea { width: 100%; background: transparent; border: none; outline: none; color: var(--text); font-size: 16px; font-family: inherit; line-height: 1.8; resize: none; min-height: calc(100vh - 200px); }
 
-    /* editor footer with pin, task, delete */
-    .editor-footer {
-      padding: 10px 16px; background: var(--surface);
-      border-top: 1px solid var(--border); flex-shrink: 0;
-      display: flex; align-items: center; gap: 8px;
-    }
-    .editor-time { font-size: 12px; color: var(--text3); flex: 1; }
-    .editor-action-btn {
-      background: none; border: 1px solid var(--border);
-      border-radius: 20px; padding: 6px 12px; font-size: 13px;
-      color: var(--text2); cursor: pointer; white-space: nowrap;
-      transition: all 0.15s;
-    }
-    .editor-action-btn:hover { border-color: var(--text2); color: var(--text); }
-    .editor-action-btn.pin-on { border-color: var(--pin-color); color: var(--pin-color); background: #1f1d10; }
-    .editor-action-btn.task-on { border-color: var(--task-color); color: var(--task-color); background: #0f1f12; }
-    .editor-delete-btn { background: none; border: 1px solid #4a2020; border-radius: 20px; padding: 6px 12px; font-size: 13px; color: #ff6b6b; cursor: pointer; white-space: nowrap; }
-    .editor-delete-btn:hover { background: #2a1010; }
-
-    /* ── CATEGORY PICKER SHEET ── */
-    .cat-picker-sheet {
-      display: none; position: fixed; inset: 0;
-      background: rgba(0,0,0,0.6); z-index: 600; align-items: flex-end;
-    }
-    .cat-picker-sheet.open { display: flex; }
-    .cat-picker-inner { background: var(--surface); width: 100%; border-radius: 20px 20px 0 0; padding: 20px 20px 36px; border-top: 1px solid var(--border); max-height: 70vh; overflow-y: auto; }
-    .cat-picker-title { font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 14px; }
-    .cat-picker-list { display: flex; flex-direction: column; gap: 4px; }
-    .cat-picker-item { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 10px; cursor: pointer; font-size: 15px; color: var(--text2); }
+    /* ── CAT PICKER SHEET ── */
+    .cat-picker-list { display: flex; flex-direction: column; gap: 2px; }
+    .cat-picker-item { display: flex; align-items: center; gap: 14px; padding: 13px 14px; border-radius: 10px; cursor: pointer; font-size: 15px; color: var(--text2); }
     .cat-picker-item:hover { background: var(--surface2); }
-    .cat-picker-item.selected { color: var(--accent); background: #1e2a3a; }
+    .cat-picker-item.selected { color: var(--accent); background: #1a2535; }
+    .cat-picker-divider { height: 1px; background: var(--border); margin: 6px 0; }
+    .cat-picker-add { display: flex; align-items: center; gap: 14px; padding: 13px 14px; border-radius: 10px; cursor: pointer; font-size: 15px; color: var(--accent); }
+    .cat-picker-add:hover { background: var(--surface2); }
 
-    /* ── LONG PRESS DELETE CONFIRM ── */
-    .delete-confirm {
-      display: none; position: fixed; inset: 0;
-      background: rgba(0,0,0,0.7); z-index: 700;
-      align-items: center; justify-content: center;
-    }
+    /* ── DELETE CONFIRM ── */
+    .delete-confirm { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 700; align-items: center; justify-content: center; }
     .delete-confirm.open { display: flex; }
-    .delete-confirm-box { background: var(--surface); border-radius: 16px; padding: 24px 20px; width: 280px; text-align: center; border: 1px solid var(--border); }
-    .delete-confirm-box h3 { font-size: 16px; font-weight: 600; margin-bottom: 8px; }
-    .delete-confirm-box p { font-size: 13px; color: var(--text2); margin-bottom: 20px; line-height: 1.5; }
+    .delete-confirm-box { background: var(--surface); border-radius: 18px; padding: 26px 22px; width: 290px; text-align: center; border: 1px solid var(--border); }
+    .delete-confirm-box h3 { font-size: 17px; font-weight: 700; margin-bottom: 8px; }
+    .delete-confirm-box p { font-size: 13px; color: var(--text2); margin-bottom: 22px; line-height: 1.5; }
     .delete-confirm-btns { display: flex; gap: 10px; }
-    .delete-confirm-btns button { flex: 1; padding: 11px; border-radius: 10px; font-size: 14px; font-weight: 500; cursor: pointer; }
+    .delete-confirm-btns button { flex: 1; padding: 12px; border-radius: 12px; font-size: 14px; font-weight: 600; cursor: pointer; }
     .dc-cancel { background: var(--surface2); color: var(--text2); border: 1px solid var(--border); }
-    .dc-delete { background: #4a1515; color: #ff6b6b; border: 1px solid #7a2020; }
+    .dc-delete { background: #3a1010; color: #ff6b6b; border: 1px solid #6a2020; }
 
     /* ── SETTINGS ── */
-    .settings-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 300; align-items: flex-end; }
-    .settings-modal.open { display: flex; }
-    .settings-sheet { background: var(--surface); width: 100%; border-radius: 20px 20px 0 0; padding: 20px 20px 40px; border-top: 1px solid var(--border); max-height: 85vh; overflow-y: auto; }
     .settings-row { display: flex; gap: 8px; align-items: center; margin-bottom: 10px; }
     .settings-row input { flex: 1; padding: 10px 12px; background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; color: var(--text); font-size: 14px; font-family: monospace; outline: none; }
     .settings-row input:focus { border-color: var(--accent); }
     .settings-row button { padding: 10px 16px; background: var(--accent); color: #111; border: none; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; }
     .key-status { font-size: 13px; margin-bottom: 14px; }
     .key-status.saved { color: #6bcb77; }
-    .danger-btn { width: 100%; padding: 11px; background: none; color: #ff6b6b; border: 1px solid #ff6b6b; border-radius: 10px; font-size: 14px; cursor: pointer; margin-top: 6px; }
+    .danger-btn { width: 100%; padding: 12px; background: none; color: #ff6b6b; border: 1px solid #ff6b6b; border-radius: 10px; font-size: 14px; cursor: pointer; margin-top: 6px; }
     .no-key-banner { background: #3a2e00; border: 1px solid #7a6000; border-radius: 8px; padding: 10px 14px; font-size: 13px; color: #ffd770; margin-bottom: 14px; text-align: center; cursor: pointer; }
   </style>
 </head>
@@ -264,27 +232,21 @@
   </div>
 
   <!-- ══ MAIN ══ -->
-  <div class="body">
-    <div class="main" id="mainContent"></div>
-  </div>
+  <div class="body"><div class="main" id="mainContent"></div></div>
 
   <!-- ══ FAB ══ -->
   <button class="fab" onclick="openAddModal()">＋</button>
 
-  <!-- ══ ADD NOTE MODAL ══ -->
-  <div class="modal-overlay" id="addModal">
-    <div class="modal">
-      <div class="modal-handle"></div>
-      <div class="modal-title">New Note</div>
-      <div id="noKeyBanner" class="no-key-banner" onclick="closeAddModal();openSettings();" style="display:none;">
-        ⚠️ No API key — needed only for Ask Claude
-      </div>
+  <!-- ══ ADD NOTE SHEET ══ -->
+  <div class="sheet-overlay" id="addModal">
+    <div class="sheet modal">
+      <div class="sheet-handle"></div>
+      <div class="sheet-title">New Note</div>
+      <div id="noKeyBanner" class="no-key-banner" onclick="closeAddModal();openSettings();" style="display:none;">⚠️ No API key — needed only for Ask Claude</div>
       <input class="title-input" type="text" id="noteTitleInput" placeholder="Title (optional)"/>
       <textarea id="noteInput" placeholder="Type your note..."></textarea>
-      <div class="task-toggle-row">
-        <button class="task-toggle-btn" id="taskToggleBtn" onclick="toggleTaskMode()">☐ Mark as Task</button>
-      </div>
-      <div class="modal-cat-label">Pick a category</div>
+      <button class="task-toggle-btn" id="taskToggleBtn" onclick="toggleTaskMode()">☐ Mark as Task</button>
+      <div class="modal-cat-label" id="catPickerLabel">Pick a category</div>
       <div class="modal-pills" id="modalPills"></div>
       <div class="new-cat-row" id="newCatRow">
         <input type="text" id="newCatInput" placeholder="Category name..." maxlength="30"/>
@@ -303,30 +265,33 @@
     <div class="editor-header">
       <button class="editor-back" onclick="closeEditor()">‹</button>
       <span class="editor-cat-badge" id="editorCatBadge" onclick="openCatPicker()">📥 Unsorted</span>
+      <button class="editor-top-btn" id="editorPinBtn" onclick="toggleEditorPin()">📌</button>
+      <button class="editor-top-btn" id="editorTaskBtn" onclick="toggleEditorTask()">☐</button>
+      <button class="editor-top-btn del" onclick="deleteFromEditor()">🗑️</button>
       <span class="editor-autosave" id="editorAutosave">Saved</span>
     </div>
     <div class="editor-body">
       <input class="editor-title" type="text" id="editorTitle" placeholder="Title..."/>
       <textarea class="editor-textarea" id="editorTextarea" placeholder="Write your note..."></textarea>
     </div>
-    <div class="editor-footer">
-      <span class="editor-time" id="editorTime"></span>
-      <button class="editor-action-btn" id="editorPinBtn" onclick="toggleEditorPin()">📌 Pin</button>
-      <button class="editor-action-btn" id="editorTaskBtn" onclick="toggleEditorTask()">☐ Task</button>
-      <button class="editor-delete-btn" onclick="deleteFromEditor()">🗑️</button>
-    </div>
   </div>
 
   <!-- ══ CATEGORY PICKER SHEET ══ -->
-  <div class="cat-picker-sheet" id="catPickerSheet">
-    <div class="cat-picker-inner">
-      <div class="modal-handle"></div>
-      <div class="cat-picker-title">Change Category</div>
+  <div class="sheet-overlay" id="catPickerSheet">
+    <div class="sheet">
+      <div class="sheet-handle"></div>
+      <div class="sheet-title">Change Category</div>
       <div class="cat-picker-list" id="catPickerList"></div>
+      <div class="cat-picker-divider"></div>
+      <div class="cat-picker-add" onclick="openInlineCatAdd()"><span style="font-size:20px;">＋</span> New category</div>
+      <div class="new-cat-row" id="pickerNewCatRow" style="margin-top:4px;">
+        <input type="text" id="pickerNewCatInput" placeholder="Category name..." maxlength="30"/>
+        <button onclick="confirmPickerNewCat()">Add</button>
+      </div>
     </div>
   </div>
 
-  <!-- ══ LONG PRESS DELETE CONFIRM ══ -->
+  <!-- ══ DELETE CONFIRM ══ -->
   <div class="delete-confirm" id="deleteConfirm">
     <div class="delete-confirm-box">
       <h3>Move to Bin?</h3>
@@ -338,15 +303,13 @@
     </div>
   </div>
 
-  <!-- ══ SETTINGS ══ -->
-  <div class="settings-modal" id="settingsModal">
-    <div class="settings-sheet">
-      <div class="modal-handle"></div>
-      <div class="modal-title">Settings</div>
-      <div class="modal-cat-label" style="margin-bottom:8px;">Claude API Key</div>
-      <p style="font-size:13px;color:var(--text3);margin-bottom:10px;line-height:1.5;">
-        Get your key at <span style="color:var(--accent);">console.anthropic.com</span> → API Keys. Stored only on this device.
-      </p>
+  <!-- ══ SETTINGS SHEET ══ -->
+  <div class="sheet-overlay" id="settingsModal">
+    <div class="sheet">
+      <div class="sheet-handle"></div>
+      <div class="sheet-title">Settings</div>
+      <div style="font-size:12px;color:var(--text2);margin-bottom:8px;">Claude API Key</div>
+      <p style="font-size:13px;color:var(--text3);margin-bottom:10px;line-height:1.5;">Get your key at <span style="color:var(--accent);">console.anthropic.com</span> → API Keys. Stored only on this device.</p>
       <div class="settings-row">
         <input type="password" id="keyInput" placeholder="sk-ant-..."/>
         <button onclick="saveKey()">Save</button>
@@ -355,22 +318,30 @@
       <button class="danger-btn" onclick="clearKey()">Remove API Key</button>
       <button class="danger-btn" onclick="clearAllNotes()">Delete All Notes</button>
       <button class="danger-btn" onclick="emptyBin()">Empty Bin</button>
-      <br/>
-      <button class="btn-cancel" style="width:100%;margin-top:12px;text-align:center;" onclick="closeSettings()">Close</button>
+      <button class="btn-cancel" style="width:100%;margin-top:14px;text-align:center;padding:12px;" onclick="closeSettings()">Close</button>
     </div>
   </div>
 
   <script>
-    const NOTES_KEY   = "sn_notes_v4";
-    const CATS_KEY    = "sn_cats_v4";
+    const NOTES_KEY   = "sn_notes_v5";
+    const CATS_KEY    = "sn_cats_v5";
     const API_KEY_KEY = "sn_apikey";
     const CLAUDE_LABEL = "Ask Claude";
+
+    // Category color palette — 20 distinct colors
+    const CAT_COLORS = [
+      "#e05c5c","#e07c3a","#d4a017","#7cb87c","#4aab8a",
+      "#4a9fd4","#6a7fd4","#9b6ad4","#d46aa0","#d4a06a",
+      "#5cb8b8","#b85c8a","#8ab85c","#5c8ab8","#b8a05c",
+      "#7a5cb8","#b85c5c","#5cb87a","#b8875c","#5c8ab8"
+    ];
+
     const DEFAULT_CATS = [
       {name:"Health",icon:"❤️"},{name:"Finances",icon:"💰"},{name:"Movies",icon:"🎬"},
       {name:"Shopping",icon:"🛒"},{name:"Learn",icon:"📚"},{name:"Stocks",icon:"📈"},
       {name:"Unsorted",icon:"📥"},
     ];
-    const ICON_OPTIONS = ["📥","📝","💡","❤️","💰","🎬","🛒","📚","📈","✈️","🏋️","🎵","🍔","🏠","💼","🎮","📸","🌿","⚡","🔧","🎯","🤝","🐾","🌍"];
+    const ICON_OPTIONS = ["📥","📝","💡","❤️","💰","🎬","🛒","📚","📈","✈️","🏋️","🎵","🍔","🏠","💼","🎮","📸","🌿","⚡","🔧","🎯","🤝","🐾","🌍","🎂","🎉","🏆","⚽","🎨","🔬"];
 
     let currentView    = "pinned";
     let selectedCat    = null;
@@ -381,26 +352,56 @@
     let longPressTimer = null;
     let pendingDeleteId = null;
 
+    /* ── COLOR ASSIGNMENT ── */
+    function getCatColor(catName) {
+      if (!catName || catName === "Unsorted") return "#888888";
+      const cats = loadCats();
+      const idx  = cats.findIndex(c => c.name === catName);
+      return CAT_COLORS[idx % CAT_COLORS.length];
+    }
+
     /* ── HELPERS ── */
     function uid() { return Date.now().toString(36)+Math.random().toString(36).slice(2,6); }
     function getApiKey() { return localStorage.getItem(API_KEY_KEY)||""; }
     function loadNotes() { try{return JSON.parse(localStorage.getItem(NOTES_KEY))||[];}catch{return[];} }
     function saveNotesArr(a) { localStorage.setItem(NOTES_KEY,JSON.stringify(a)); }
     function loadCats() {
-      try{const s=JSON.parse(localStorage.getItem(CATS_KEY)); return s&&s.length?s:DEFAULT_CATS.map(c=>({...c}));}
+      try{const s=JSON.parse(localStorage.getItem(CATS_KEY));return s&&s.length?s:DEFAULT_CATS.map(c=>({...c}));}
       catch{return DEFAULT_CATS.map(c=>({...c}));}
     }
     function saveCatsArr(c) { localStorage.setItem(CATS_KEY,JSON.stringify(c)); }
     function getCatIcon(name) { const c=loadCats().find(c=>c.name===name); return c?c.icon:"📝"; }
-    function timeAgo(ts) {
-      const d=Math.floor((Date.now()-ts)/1000);
-      if(d<60)return"just now"; if(d<3600)return Math.floor(d/60)+"m ago";
-      if(d<86400)return Math.floor(d/3600)+"h ago"; return Math.floor(d/86400)+"d ago";
-    }
     function escHtml(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
-    function highlightText(text,q){
-      const e=escHtml(text); if(!q)return e;
+    function highlightText(t,q){
+      const e=escHtml(t); if(!q)return e;
       return e.replace(new RegExp(q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'),'gi'),m=>`<span class="highlight">${m}</span>`);
+    }
+
+    /* ── TIMELINE GROUPING ── */
+    function getTimelineGroup(ts) {
+      const now   = new Date();
+      const date  = new Date(ts);
+      const diffMs = now - date;
+      const diffDays = diffMs / (1000 * 60 * 60 * 24);
+
+      if (diffDays < 1 && now.getDate() === date.getDate()) return "Today";
+      if (diffDays < 2 && (now.getDate() - date.getDate() === 1 || (now.getDate() === 1 && date.getDate() >= 28))) return "Yesterday";
+      if (diffDays < 7)  return "Previous 7 Days";
+      if (diffDays < 30) return "Previous 30 Days";
+
+      const months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+      if (date.getFullYear() === now.getFullYear()) return months[date.getMonth()];
+      return String(date.getFullYear());
+    }
+
+    const TIMELINE_ORDER = ["Today","Yesterday","Previous 7 Days","Previous 30 Days"];
+    function timelineSort(a, b) {
+      const ai = TIMELINE_ORDER.indexOf(a), bi = TIMELINE_ORDER.indexOf(b);
+      if (ai !== -1 && bi !== -1) return ai - bi;
+      if (ai !== -1) return -1;
+      if (bi !== -1) return 1;
+      // both are month names or years — sort by value (descending)
+      return b.localeCompare(a);
     }
 
     /* ── SEARCH ── */
@@ -420,12 +421,14 @@
 
     function renderSidebarCats(){
       const cats=loadCats();
-      document.getElementById("sidebarCats").innerHTML=cats.map(cat=>{
+      document.getElementById("sidebarCats").innerHTML=cats.map((cat,i)=>{
         const safe=cat.name.replace(/\\/g,"\\\\").replace(/'/g,"\\'");
         const active=currentView==="cat:"+cat.name?"active":"";
+        const color=CAT_COLORS[i%CAT_COLORS.length];
         return `<div class="sidebar-cat-row">
           <div class="sidebar-item ${active}" onclick="setView('cat:${safe}')">
-            <span class="icon">${cat.icon}</span> ${escHtml(cat.name)}
+            <span class="cat-color-dot" style="background:${color};"></span>
+            <span>${cat.icon} ${escHtml(cat.name)}</span>
           </div>
           <button class="cat-delete-btn" onclick="deleteCategory('${safe}')">✕</button>
         </div>`;
@@ -461,79 +464,99 @@
       }
 
       let html="";
+
       if(currentView==="pinned"){
-        const tasks=all.filter(n=>n.isTask&&!n.deleted);
-        const pinned=all.filter(n=>n.pinned&&!n.isTask&&!n.deleted);
-        const others=all.filter(n=>!n.pinned&&!n.isTask&&!n.deleted);
+        const tasks  = all.filter(n=>n.isTask&&!n.deleted);
+        const pinned = all.filter(n=>n.pinned&&!n.isTask&&!n.deleted);
+        const others = all.filter(n=>!n.pinned&&!n.isTask&&!n.deleted);
         if(!tasks.length&&!pinned.length&&!others.length){main.innerHTML=`<div class="empty-state">📝<br>No notes yet.<br>Tap + to add your first one!</div>`;return;}
-        if(tasks.length) html+=`<div class="section-label">✅ Tasks</div><div class="notes-grid">${tasks.map(n=>noteCard(n)).join("")}</div>`;
-        if(pinned.length)html+=`<div class="section-label">📌 Pinned</div><div class="notes-grid">${pinned.map(n=>noteCard(n)).join("")}</div>`;
-        if(others.length)html+=`<div class="section-label">${(tasks.length||pinned.length)?"Others":"Notes"}</div><div class="notes-grid">${others.map(n=>noteCard(n)).join("")}</div>`;
-      } else if(currentView==="all"){
+        if(tasks.length)  html+=`<div class="section-label">✅ Tasks</div><div class="notes-grid">${tasks.map(n=>noteCard(n)).join("")}</div>`;
+        if(pinned.length) html+=`<div class="section-label">📌 Pinned</div><div class="notes-grid">${pinned.map(n=>noteCard(n)).join("")}</div>`;
+        if(others.length) html+=timelineGrid(others);
+
+      }else if(currentView==="all"){
         const active=all.filter(n=>!n.deleted);
         if(!active.length){main.innerHTML=`<div class="empty-state">📝<br>No notes yet.</div>`;return;}
         const tasks=active.filter(n=>n.isTask), pinned=active.filter(n=>n.pinned&&!n.isTask), others=active.filter(n=>!n.pinned&&!n.isTask);
-        if(tasks.length) html+=`<div class="section-label">✅ Tasks</div><div class="notes-grid">${tasks.map(n=>noteCard(n)).join("")}</div>`;
-        if(pinned.length)html+=`<div class="section-label">📌 Pinned</div><div class="notes-grid">${pinned.map(n=>noteCard(n)).join("")}</div>`;
-        if(others.length)html+=`<div class="section-label">Others</div><div class="notes-grid">${others.map(n=>noteCard(n)).join("")}</div>`;
-      } else if(currentView==="tasks"){
+        if(tasks.length)  html+=`<div class="section-label">✅ Tasks</div><div class="notes-grid">${tasks.map(n=>noteCard(n)).join("")}</div>`;
+        if(pinned.length) html+=`<div class="section-label">📌 Pinned</div><div class="notes-grid">${pinned.map(n=>noteCard(n)).join("")}</div>`;
+        if(others.length) html+=timelineGrid(others);
+
+      }else if(currentView==="tasks"){
         const tasks=all.filter(n=>n.isTask&&!n.deleted);
         if(!tasks.length){main.innerHTML=`<div class="empty-state">✅<br>No tasks yet.</div>`;return;}
         html=`<div class="notes-grid">${tasks.map(n=>noteCard(n)).join("")}</div>`;
-      } else if(currentView==="bin"){
+
+      }else if(currentView==="bin"){
         const bin=all.filter(n=>n.deleted);
         if(!bin.length){main.innerHTML=`<div class="empty-state">🗑️<br>Bin is empty.</div>`;return;}
         html=`<div class="notes-grid">${bin.map(n=>noteCard(n,true)).join("")}</div>`;
-      } else if(currentView.startsWith("cat:")){
+
+      }else if(currentView.startsWith("cat:")){
         const cat=currentView.slice(4), notes=all.filter(n=>n.cat===cat&&!n.deleted);
         if(!notes.length){main.innerHTML=`<div class="empty-state">${getCatIcon(cat)}<br>No notes in this category yet.</div>`;return;}
         html=`<div class="notes-grid">${notes.map(n=>noteCard(n)).join("")}</div>`;
       }
+
       main.innerHTML=html;
     }
 
+    /* build timeline-grouped grid for "others" notes */
+    function timelineGrid(notes) {
+      const groups = {};
+      notes.forEach(n => {
+        const g = getTimelineGroup(n.ts);
+        if (!groups[g]) groups[g] = [];
+        groups[g].push(n);
+      });
+      const keys = Object.keys(groups).sort(timelineSort);
+      return keys.map(key =>
+        `<div class="timeline-label">${escHtml(key)}</div>
+         <div class="notes-grid">${groups[key].map(n=>noteCard(n)).join("")}</div>`
+      ).join("");
+    }
+
     /* ── NOTE CARD ── */
-    function noteCard(note, inBin=false, query=""){
-      const id=note.id;
-      const titleHtml=note.title?`<div class="note-card-title">${query?highlightText(note.title,query):escHtml(note.title)}</div>`:"";
-      const bodyHtml=query?highlightText(note.text,query):escHtml(note.text);
-      const unsorted=note.cat==="Unsorted"&&note.aiPending?`<div class="unsorted-badge">⏳ AI sorting...</div>`:"";
-      const catIcon=getCatIcon(note.cat||"");
+    function noteCard(note, inBin=false, query="") {
+      const id       = note.id;
+      const color    = getCatColor(note.cat);
+      const titleHtml= note.title ? `<div class="note-card-title">${query?highlightText(note.title,query):escHtml(note.title)}</div>` : "";
+      const bodyHtml = query ? highlightText(note.text,query) : escHtml(note.text);
+      const unsorted = note.cat==="Unsorted"&&note.aiPending ? `<div class="unsorted-badge">⏳ AI sorting...</div>` : "";
 
-      let cardClass="note-card";
-      if(note.pinned&&!inBin) cardClass+=" pinned";
-      if(note.isTask) cardClass+=" is-task";
+      // colored tag pill
+      const tagHtml = `<div class="cat-tag" style="background:${color}22;color:${color};border:1px solid ${color}55;">${getCatIcon(note.cat||"")} ${escHtml(note.cat||"Unsorted")}</div>`;
 
-      // bin cards: restore / perm delete buttons
-      // normal cards: completely clean — no buttons, just tappable
-      const binActions=inBin?`<div style="display:flex;justify-content:flex-end;gap:6px;margin-top:8px;">
-        <button class="editor-action-btn" onclick="event.stopPropagation();restoreNote('${id}')">↩️ Restore</button>
-        <button class="editor-delete-btn" onclick="event.stopPropagation();permDelete('${id}')">❌ Delete</button>
-      </div>`:"";
+      let cardClass = "note-card";
+      if (note.pinned && !inBin) cardClass += " pinned";
+      if (note.isTask)           cardClass += " is-task";
 
-      const clickAttr=inBin?"":`onclick="openEditor('${id}')"`;
-      const longPressAttrs=inBin?"":
-        `ontouchstart="startLongPress('${id}',event)" ontouchend="cancelLongPress()" ontouchcancel="cancelLongPress()"
-         onmousedown="startLongPress('${id}',event)" onmouseup="cancelLongPress()" onmouseleave="cancelLongPress()"`;
+      const binActions = inBin ? `<div style="display:flex;gap:6px;margin-top:10px;">
+        <button style="flex:1;padding:8px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text2);font-size:13px;cursor:pointer;" onclick="event.stopPropagation();restoreNote('${id}')">↩️ Restore</button>
+        <button style="flex:1;padding:8px;background:#3a1010;border:1px solid #6a2020;border-radius:8px;color:#ff6b6b;font-size:13px;cursor:pointer;" onclick="event.stopPropagation();permDelete('${id}')">❌ Delete</button>
+      </div>` : "";
 
-      return `<div class="${cardClass}" id="card-${id}" ${clickAttr} ${longPressAttrs}>
+      const click = inBin ? "" : `onclick="openEditor('${id}')"`;
+      const lp    = inBin ? "" : `ontouchstart="startLongPress('${id}',event)" ontouchend="cancelLongPress()" ontouchcancel="cancelLongPress()" onmousedown="startLongPress('${id}',event)" onmouseup="cancelLongPress()" onmouseleave="cancelLongPress()"`;
+
+      return `<div class="${cardClass}" id="card-${id}" style="border-left-color:${color};" ${click} ${lp}>
         ${unsorted}
         ${titleHtml}
         <div class="note-card-text">${bodyHtml}</div>
-        <div class="note-card-cat">${catIcon} ${escHtml(note.cat||"")}</div>
-        <div class="note-card-time">${timeAgo(note.ts)}</div>
+        ${tagHtml}
+        <div class="note-card-time">${note.ts ? new Date(note.ts).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}) : ""}</div>
         ${binActions}
       </div>`;
     }
 
     /* ── LONG PRESS ── */
-    function startLongPress(id, e){
+    function startLongPress(id,e){
       cancelLongPress();
       const card=document.getElementById("card-"+id);
-      if(card) card.classList.add("pressing");
+      if(card)card.classList.add("pressing");
       longPressTimer=setTimeout(()=>{
         cancelLongPress();
-        if(card) card.classList.remove("pressing");
+        document.querySelectorAll(".note-card.pressing").forEach(c=>c.classList.remove("pressing"));
         showDeleteConfirm(id);
       },700);
     }
@@ -544,15 +567,14 @@
     function showDeleteConfirm(id){
       pendingDeleteId=id;
       const note=loadNotes().find(n=>n.id===id);
-      const preview=note?(note.title||note.text||"").slice(0,40):"";
-      document.getElementById("deleteConfirmText").textContent=`"${preview}${preview.length===40?"...":""}" will be moved to bin.`;
+      const preview=(note?(note.title||note.text||""):"").slice(0,50);
+      document.getElementById("deleteConfirmText").textContent=`"${preview}${preview.length===50?"...":""}" will be moved to bin.`;
       document.getElementById("deleteConfirm").classList.add("open");
     }
     function closeDeleteConfirm(){document.getElementById("deleteConfirm").classList.remove("open");pendingDeleteId=null;}
     function confirmDelete(){if(pendingDeleteId){deleteNote(pendingDeleteId);closeDeleteConfirm();}}
 
     /* ── NOTE ACTIONS ── */
-    function togglePin(id){const notes=loadNotes(),n=notes.find(n=>n.id===id);if(n){n.pinned=!n.pinned;saveNotesArr(notes);renderMain();}}
     function deleteNote(id){const notes=loadNotes(),n=notes.find(n=>n.id===id);if(n){n.deleted=true;n.pinned=false;saveNotesArr(notes);renderMain();}}
     function restoreNote(id){const notes=loadNotes(),n=notes.find(n=>n.id===id);if(n){n.deleted=false;saveNotesArr(notes);renderMain();}}
     function permDelete(id){if(!confirm("Delete forever?"))return;saveNotesArr(loadNotes().filter(n=>n.id!==id));renderMain();}
@@ -563,17 +585,17 @@
       editingNoteId=id;
       document.getElementById("editorTitle").value=note.title||"";
       document.getElementById("editorTextarea").value=note.text;
+      const color=getCatColor(note.cat);
       document.getElementById("editorCatBadge").textContent=getCatIcon(note.cat||"")+" "+(note.cat||"Unsorted");
-      document.getElementById("editorTime").textContent="Edited "+timeAgo(note.ts);
+      document.getElementById("editorCatBadge").style.borderColor=color+"88";
+      document.getElementById("editorCatBadge").style.color=color;
       document.getElementById("editorAutosave").textContent="Saved";
-      // pin button state
       const pinBtn=document.getElementById("editorPinBtn");
-      pinBtn.textContent=note.pinned?"📌 Pinned":"📌 Pin";
-      pinBtn.classList.toggle("pin-on",!!note.pinned);
-      // task button state
+      pinBtn.textContent=note.pinned?"📌":"🖇️";
+      pinBtn.className="editor-top-btn"+(note.pinned?" pin-on":"");
       const taskBtn=document.getElementById("editorTaskBtn");
-      taskBtn.textContent=note.isTask?"✅ Task":"☐ Task";
-      taskBtn.classList.toggle("task-on",!!note.isTask);
+      taskBtn.textContent=note.isTask?"✅":"☐";
+      taskBtn.className="editor-top-btn"+(note.isTask?" task-on":"");
       document.getElementById("noteEditor").classList.add("open");
       setTimeout(()=>document.getElementById("editorTextarea").focus(),100);
     }
@@ -581,29 +603,25 @@
       document.getElementById("noteEditor").classList.remove("open");
       clearTimeout(autoSaveTimer); editingNoteId=null; renderMain();
     }
-    function deleteFromEditor(){
-      if(!editingNoteId)return;
-      const id=editingNoteId; closeEditor();
-      deleteNote(id);
-    }
+    function deleteFromEditor(){if(!editingNoteId)return;const id=editingNoteId;closeEditor();deleteNote(id);}
     function toggleEditorPin(){
       if(!editingNoteId)return;
-      const notes=loadNotes(),note=notes.find(n=>n.id===editingNoteId); if(!note)return;
+      const notes=loadNotes(),note=notes.find(n=>n.id===editingNoteId);if(!note)return;
       note.pinned=!note.pinned; saveNotesArr(notes);
       const btn=document.getElementById("editorPinBtn");
-      btn.textContent=note.pinned?"📌 Pinned":"📌 Pin";
-      btn.classList.toggle("pin-on",note.pinned);
+      btn.textContent=note.pinned?"📌":"🖇️";
+      btn.className="editor-top-btn"+(note.pinned?" pin-on":"");
     }
     function toggleEditorTask(){
       if(!editingNoteId)return;
-      const notes=loadNotes(),note=notes.find(n=>n.id===editingNoteId); if(!note)return;
+      const notes=loadNotes(),note=notes.find(n=>n.id===editingNoteId);if(!note)return;
       note.isTask=!note.isTask; saveNotesArr(notes);
       const btn=document.getElementById("editorTaskBtn");
-      btn.textContent=note.isTask?"✅ Task":"☐ Task";
-      btn.classList.toggle("task-on",note.isTask);
+      btn.textContent=note.isTask?"✅":"☐";
+      btn.className="editor-top-btn"+(note.isTask?" task-on":"");
     }
     function triggerAutoSave(){
-      document.getElementById("editorAutosave").textContent="Saving...";
+      document.getElementById("editorAutosave").textContent="●";
       clearTimeout(autoSaveTimer);
       autoSaveTimer=setTimeout(()=>{
         if(!editingNoteId)return;
@@ -611,47 +629,59 @@
         const text=document.getElementById("editorTextarea").value;
         const notes=loadNotes(),note=notes.find(n=>n.id===editingNoteId);
         if(note){note.title=title;note.text=text;note.ts=Date.now();saveNotesArr(notes);}
-        document.getElementById("editorAutosave").textContent="Saved ✓";
-        document.getElementById("editorTime").textContent="Edited just now";
+        document.getElementById("editorAutosave").textContent="✓";
       },500);
     }
     document.getElementById("editorTextarea").addEventListener("input",triggerAutoSave);
     document.getElementById("editorTitle").addEventListener("input",triggerAutoSave);
+    document.getElementById("editorTitle").addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();document.getElementById("editorTextarea").focus();}});
+    document.getElementById("noteTitleInput").addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();document.getElementById("noteInput").focus();}});
 
-    // Enter on title → jump to body
-    document.getElementById("editorTitle").addEventListener("keydown",e=>{
-      if(e.key==="Enter"){e.preventDefault();document.getElementById("editorTextarea").focus();}
-    });
-    document.getElementById("noteTitleInput").addEventListener("keydown",e=>{
-      if(e.key==="Enter"){e.preventDefault();document.getElementById("noteInput").focus();}
-    });
-
-    /* ── CATEGORY PICKER (inside editor) ── */
+    /* ── CATEGORY PICKER (editor) ── */
     function openCatPicker(){
       const cats=loadCats();
       const currentCat=editingNoteId?(loadNotes().find(n=>n.id===editingNoteId)||{}).cat:"";
-      document.getElementById("catPickerList").innerHTML=cats.map(cat=>{
+      document.getElementById("catPickerList").innerHTML=cats.map((cat,i)=>{
         const safe=cat.name.replace(/\\/g,"\\\\").replace(/'/g,"\\'");
         const sel=cat.name===currentCat?"selected":"";
+        const color=CAT_COLORS[i%CAT_COLORS.length];
         return `<div class="cat-picker-item ${sel}" onclick="changeNoteCat('${safe}')">
-          <span style="font-size:20px;">${cat.icon}</span>
+          <span style="width:12px;height:12px;border-radius:50%;background:${color};flex-shrink:0;display:inline-block;"></span>
+          <span style="font-size:18px;">${cat.icon}</span>
           <span>${escHtml(cat.name)}</span>
           ${sel?'<span style="margin-left:auto;color:var(--accent);">✓</span>':""}
         </div>`;
       }).join("");
+      document.getElementById("pickerNewCatRow").classList.remove("visible");
+      document.getElementById("pickerNewCatInput").value="";
       document.getElementById("catPickerSheet").classList.add("open");
     }
-    function closeCatPicker(){document.getElementById("catPickerSheet").classList.remove("open");}
     function changeNoteCat(cat){
       if(!editingNoteId){closeCatPicker();return;}
       const notes=loadNotes(),note=notes.find(n=>n.id===editingNoteId);
       if(note){note.cat=cat;note.aiPending=false;saveNotesArr(notes);}
+      const color=getCatColor(cat);
       document.getElementById("editorCatBadge").textContent=getCatIcon(cat)+" "+cat;
-      closeCatPicker();
-      renderSidebarCats();
+      document.getElementById("editorCatBadge").style.borderColor=color+"88";
+      document.getElementById("editorCatBadge").style.color=color;
+      closeCatPicker(); renderSidebarCats();
     }
-    // close cat picker on overlay tap
+    function closeCatPicker(){document.getElementById("catPickerSheet").classList.remove("open");}
+    function openInlineCatAdd(){
+      const row=document.getElementById("pickerNewCatRow");
+      row.classList.add("visible");
+      setTimeout(()=>document.getElementById("pickerNewCatInput").focus(),100);
+    }
+    function confirmPickerNewCat(){
+      const input=document.getElementById("pickerNewCatInput"),name=input.value.trim();if(!name)return;
+      const cats=loadCats();
+      if(!cats.find(c=>c.name===name)){cats.push({name,icon:"📝"});saveCatsArr(cats);suggestIconForCat(name);}
+      input.value="";
+      document.getElementById("pickerNewCatRow").classList.remove("visible");
+      changeNoteCat(name);
+    }
     document.getElementById("catPickerSheet").addEventListener("click",function(e){if(e.target===this)closeCatPicker();});
+    document.getElementById("pickerNewCatInput").addEventListener("keydown",e=>{if(e.key==="Enter")confirmPickerNewCat();});
 
     /* ── ADD NOTE MODAL ── */
     function toggleTaskMode(){
@@ -659,9 +689,11 @@
       const btn=document.getElementById("taskToggleBtn");
       btn.classList.toggle("active",isTaskMode);
       btn.textContent=isTaskMode?"✅ This is a Task":"☐ Mark as Task";
+      // hide/show category picker label based on task mode
+      document.getElementById("catPickerLabel").textContent=isTaskMode?"Category (optional)":"Pick a category";
     }
     function openAddModal(){
-      selectedCat=null; isTaskMode=false;
+      selectedCat=null;isTaskMode=false;
       document.getElementById("noteTitleInput").value="";
       document.getElementById("noteInput").value="";
       document.getElementById("modalStatus").textContent="";
@@ -670,6 +702,7 @@
       document.getElementById("newCatInput").value="";
       document.getElementById("taskToggleBtn").classList.remove("active");
       document.getElementById("taskToggleBtn").textContent="☐ Mark as Task";
+      document.getElementById("catPickerLabel").textContent="Pick a category";
       document.getElementById("noKeyBanner").style.display=getApiKey()?"none":"block";
       renderModalPills();
       document.getElementById("addModal").classList.add("open");
@@ -678,9 +711,11 @@
     function closeAddModal(){document.getElementById("addModal").classList.remove("open");}
     function renderModalPills(){
       const cats=loadCats();
-      let html=cats.map(cat=>{
+      let html=cats.map((cat,i)=>{
         const safe=cat.name.replace(/\\/g,"\\\\").replace(/'/g,"\\'");
-        return `<button class="mpill ${selectedCat===cat.name?"selected":""}" onclick="selectModalCat('${safe}')">${cat.icon} ${escHtml(cat.name)}</button>`;
+        const color=CAT_COLORS[i%CAT_COLORS.length];
+        const sel=selectedCat===cat.name;
+        return `<button class="mpill ${sel?"selected":""}" style="${sel?`background:${color};border-color:${color};`:`border-color:${color}44;color:${color};`}" onclick="selectModalCat('${safe}')">${cat.icon} ${escHtml(cat.name)}</button>`;
       }).join("");
       html+=`<button class="mpill claude ${selectedCat===CLAUDE_LABEL?"selected":""}" onclick="selectModalCat('${CLAUDE_LABEL}')">✦ Ask Claude</button>`;
       html+=`<button class="add-pill-btn" onclick="toggleNewCatRow()">+</button>`;
@@ -693,14 +728,15 @@
       if(row.classList.contains("visible"))document.getElementById("newCatInput").focus();
     }
     function confirmNewCat(){
-      const input=document.getElementById("newCatInput"),name=input.value.trim(); if(!name)return;
+      const input=document.getElementById("newCatInput"),name=input.value.trim();if(!name)return;
       const cats=loadCats();
       if(!cats.find(c=>c.name===name)){cats.push({name,icon:"📝"});saveCatsArr(cats);suggestIconForCat(name);}
-      selectedCat=name; input.value="";
+      selectedCat=name;input.value="";
       document.getElementById("newCatRow").classList.remove("visible");
-      renderModalPills(); renderSidebarCats();
+      renderModalPills();renderSidebarCats();
     }
     function promptAddCat(){closeSidebar();openAddModal();setTimeout(toggleNewCatRow,300);}
+    document.getElementById("newCatInput").addEventListener("keydown",e=>{if(e.key==="Enter")confirmNewCat();});
 
     /* ── SAVE NOTE ── */
     async function saveNote(){
@@ -709,27 +745,29 @@
       const text=document.getElementById("noteInput").value.trim();
       status.className="";
       if(!text&&!title){status.className="error";status.textContent="Please type a note.";return;}
-      if(!selectedCat){status.className="error";status.textContent="Please pick a category.";return;}
+      // tasks don't need a category; others do
+      if(!isTaskMode&&!selectedCat){status.className="error";status.textContent="Please pick a category.";return;}
       btn.disabled=true;
       const useAI=selectedCat===CLAUDE_LABEL;
-      const noteObj={id:uid(),title,text,cat:useAI?"Unsorted":selectedCat,ts:Date.now(),pinned:false,deleted:false,isTask:isTaskMode,done:false,aiPending:useAI};
-      const notes=loadNotes(); notes.unshift(noteObj); saveNotesArr(notes);
+      const cat=isTaskMode&&!selectedCat?"Tasks":(useAI?"Unsorted":(selectedCat||"Tasks"));
+      const noteObj={id:uid(),title,text,cat,ts:Date.now(),pinned:false,deleted:false,isTask:isTaskMode,done:false,aiPending:useAI};
+      const notes=loadNotes();notes.unshift(noteObj);saveNotesArr(notes);
       status.className="success";
-      status.textContent=useAI?"Saved! AI sorting in background...":"Saved under: "+selectedCat;
-      renderSidebarCats(); renderMain();
-      setTimeout(()=>{closeAddModal();status.textContent="";status.className="";},900);
+      status.textContent=useAI?"Saved! AI sorting in background...":"Saved ✓";
+      renderSidebarCats();renderMain();
+      setTimeout(()=>{closeAddModal();status.textContent="";status.className="";},800);
       btn.disabled=false;
-      if(useAI) runBackgroundAI(noteObj.id,text,title);
+      if(useAI)runBackgroundAI(noteObj.id,text,title);
     }
 
     /* ── BACKGROUND AI ── */
     async function runBackgroundAI(noteId,text,title){
-      const apiKey=getApiKey(); if(!apiKey)return;
+      const apiKey=getApiKey();if(!apiKey)return;
       try{
         const cats=loadCats().map(c=>c.name).filter(n=>n!=="Unsorted");
         const catList=cats.length?`Existing categories: ${cats.join(", ")}.`:"No categories yet.";
         const content=title?`Title: ${title}\nNote: ${text}`:text;
-        const prompt=`You are a note organizer. ${catList}\n\nNote:\n${content}\n\nRules:\n1. FIRST try to match an existing category above.\n2. Only create a new category if it genuinely does not fit ANY existing one.\n3. If the note is too vague or unclear to reliably categorize, reply with exactly: Unsorted\n4. Reply with ONLY the category name. No punctuation. Max 3 words if new.`;
+        const prompt=`You are a note organizer. ${catList}\n\nNote:\n${content}\n\nRules:\n1. FIRST try hard to match an existing category. Be generous — if it's even loosely related, use that category.\n2. Only create a new short category (max 3 words) if the note truly does not fit any existing category at all.\n3. Only return exactly "Unsorted" if the note is completely meaningless or impossible to categorize (e.g. random characters). Do NOT return Unsorted just because you are unsure — make your best guess.\n4. Reply with ONLY the category name. No punctuation. No explanation.`;
         const res=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json","x-api-key":apiKey,"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},body:JSON.stringify({model:"claude-haiku-4-5-20251001",max_tokens:20,messages:[{role:"user",content:prompt}]})});
         if(!res.ok)return;
         const data=await res.json();
@@ -737,33 +775,30 @@
         if(!raw)return;
         const allNotes=loadNotes(),note=allNotes.find(n=>n.id===noteId);
         if(note){
-          note.cat=raw; note.aiPending=false;
+          note.cat=raw;note.aiPending=false;
           if(raw!=="Unsorted"){const allCats=loadCats();if(!allCats.find(c=>c.name===raw)){allCats.push({name:raw,icon:"📝"});saveCatsArr(allCats);suggestIconForCat(raw);}}
-          saveNotesArr(allNotes); renderSidebarCats(); renderMain();
+          saveNotesArr(allNotes);renderSidebarCats();renderMain();
         }
       }catch(e){}
     }
 
-    /* ── RETRY PENDING AI (on app focus / online) ── */
+    /* ── RETRY PENDING AI ── */
     function retryPendingAI(){
-      const apiKey=getApiKey(); if(!apiKey)return;
-      const notes=loadNotes();
-      notes.filter(n=>n.aiPending&&!n.deleted).forEach(n=>runBackgroundAI(n.id,n.text,n.title||""));
+      const apiKey=getApiKey();if(!apiKey)return;
+      loadNotes().filter(n=>n.aiPending&&!n.deleted).forEach(n=>runBackgroundAI(n.id,n.text,n.title||""));
     }
-    // Retry when app comes back online
-    window.addEventListener("online", retryPendingAI);
-    // Retry when tab becomes visible again (user switches back to app)
+    window.addEventListener("online",retryPendingAI);
     document.addEventListener("visibilitychange",()=>{if(!document.hidden)retryPendingAI();});
 
     /* ── SUGGEST ICON ── */
     async function suggestIconForCat(catName){
-      const apiKey=getApiKey(); if(!apiKey)return;
+      const apiKey=getApiKey();if(!apiKey)return;
       try{
         const icons=ICON_OPTIONS.join(" ");
         const res=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json","x-api-key":apiKey,"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},body:JSON.stringify({model:"claude-haiku-4-5-20251001",max_tokens:5,messages:[{role:"user",content:`Pick ONE emoji from this list for the category "${catName}": ${icons}\nReply with only the emoji.`}]})});
         if(!res.ok)return;
         const data=await res.json();
-        const icon=(data?.content?.[0]?.text||"").trim().slice(0,2); if(!icon)return;
+        const icon=(data?.content?.[0]?.text||"").trim().slice(0,2);if(!icon)return;
         const cats=loadCats(),cat=cats.find(c=>c.name===catName);
         if(cat){cat.icon=icon;saveCatsArr(cats);renderSidebarCats();renderModalPills();renderMain();}
       }catch(e){}
@@ -784,21 +819,16 @@
       localStorage.setItem(API_KEY_KEY,val);
       document.getElementById("keyStatus").textContent="✓ Key saved!";
       document.getElementById("keyStatus").className="key-status saved";
-      // immediately retry any pending notes
       retryPendingAI();
     }
-    function clearKey(){if(!confirm("Remove API key?"))return;localStorage.removeItem(API_KEY_KEY);document.getElementById("keyInput").value="";document.getElementById("keyStatus").textContent="Key removed.";document.getElementById("keyStatus").className="key-status";}
+    function clearKey(){if(!confirm("Remove API key?"))return;localStorage.removeItem(API_KEY_KEY);document.getElementById("keyInput").value="";document.getElementById("keyStatus").textContent="";document.getElementById("keyStatus").className="key-status";}
     function clearAllNotes(){if(!confirm("Delete ALL notes permanently?"))return;localStorage.removeItem(NOTES_KEY);closeSettings();renderMain();}
     function emptyBin(){if(!confirm("Permanently delete everything in the bin?"))return;saveNotesArr(loadNotes().filter(n=>!n.deleted));if(currentView==="bin")renderMain();closeSettings();}
-
-    /* ── KEYBOARD ── */
-    document.getElementById("newCatInput").addEventListener("keydown",e=>{if(e.key==="Enter")confirmNewCat();});
 
     /* ── INIT ── */
     setView("pinned");
     renderSidebarCats();
-    // Retry any notes left pending from last session
-    setTimeout(retryPendingAI, 1000);
+    setTimeout(retryPendingAI,1200);
   </script>
 </body>
 </html>
