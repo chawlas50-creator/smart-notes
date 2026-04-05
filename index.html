@@ -190,7 +190,6 @@
   <div class="sidebar-logo">📝 Smart Notes</div>
   <div style="padding-top:8px;">
     <div class="sidebar-item active" id="sb-pinned" onclick="setView('pinned')"><span class="icon">🏠</span> Home</div>
-    <div class="sidebar-item" id="sb-all" onclick="setView('all')"><span class="icon">💡</span> All Notes</div>
     <div class="sidebar-item" id="sb-tasks" onclick="setView('tasks')"><span class="icon">✅</span> Tasks</div>
     <div class="sidebar-item" id="sb-stats" onclick="setView('stats')"><span class="icon">📊</span> Stats</div>
   </div>
@@ -301,8 +300,6 @@
     </div>
     <p class="key-status" id="keyStatus"></p>
     <button class="danger-btn" onclick="clearKey()">Remove API Key</button>
-    <button class="danger-btn" onclick="clearAllNotes()">Delete All Notes</button>
-    <button class="danger-btn" onclick="emptyBin()">Empty Bin</button>
     <button class="btn-cancel" style="width:100%;margin-top:14px;text-align:center;padding:12px;" onclick="closeSettings()">Close</button>
   </div>
 </div>
@@ -377,7 +374,7 @@ function deleteCategory(cat){
 function setView(view){
   currentView=view;closeSidebar();clearSearch();
   document.querySelectorAll(".sidebar-item").forEach(el=>el.classList.remove("active"));
-  const map={pinned:"Home",all:"All Notes",bin:"Bin",tasks:"Tasks",stats:"Stats"};
+  const map={pinned:"Home",bin:"Bin",tasks:"Tasks",stats:"Stats"};
   if(map[view]){const el=document.getElementById("sb-"+view);if(el)el.classList.add("active");document.getElementById("headerTitle").textContent=map[view];}
   else if(view.startsWith("cat:")){const cat=view.slice(4);document.getElementById("headerTitle").textContent=getCatIcon(cat)+" "+cat;}
   renderSidebarCats();renderMain();
@@ -414,7 +411,7 @@ function renderMain(){
   }else if(currentView==="bin"){
     const bin=all.filter(n=>n.deleted);
     if(!bin.length){main.innerHTML=`<div class="empty-state">🗑️<br>Bin is empty.</div>`;return;}
-    html=`<div class="notes-grid">${bin.map(n=>noteCard(n,true)).join("")}</div>`;
+    html=`<div style="display:flex;justify-content:flex-end;margin-bottom:12px;"><button onclick="emptyBin()" style="background:none;border:1px solid #ff6b6b;color:#ff6b6b;border-radius:20px;padding:7px 16px;font-size:13px;cursor:pointer;">🗑️ Empty Bin</button></div><div class="notes-grid">${bin.map(n=>noteCard(n,true)).join("")}</div>`;
   }else if(currentView.startsWith("cat:")){
     const cat=currentView.slice(4),notes=all.filter(n=>n.cat===cat&&!n.deleted);
     if(!notes.length){main.innerHTML=`<div class="empty-state">${getCatIcon(cat)}<br>No notes in this category yet.</div>`;return;}
@@ -436,7 +433,7 @@ function noteCard(note,inBin=false,query=""){
   const bodyHtml=query?highlightText(note.text,query):escHtml(note.text);
   const unsorted=note.cat==="Unsorted"&&note.aiPending?`<div class="unsorted-badge">⏳ AI sorting...</div>`:"";
   // colored tag — no text label, just icon + name in pill  (name kept for context but category TEXT row removed)
-  const tagHtml=`<div class="cat-tag" style="background:${color}22;color:${color};border:1px solid ${color}66;" title="${escHtml(note.cat||"Unsorted")}">${getCatIcon(note.cat||"")}</div>`;
+  const tagHtml=`<div class="cat-tag" style="background:${color};width:32px;height:6px;border-radius:3px;padding:0;" title="${escHtml(note.cat||"Unsorted")}"></div>`;
   let cardClass="note-card"+(note.pinned&&!inBin?" pinned":"")+(note.isTask?" is-task":"");
   const binActions=inBin?`<div style="display:flex;gap:6px;margin-top:8px;"><button style="flex:1;padding:8px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text2);font-size:13px;cursor:pointer;" onclick="event.stopPropagation();restoreNote('${id}')">↩️ Restore</button><button style="flex:1;padding:8px;background:#3a1010;border:1px solid #6a2020;border-radius:8px;color:#ff6b6b;font-size:13px;cursor:pointer;" onclick="event.stopPropagation();permDelete('${id}')">❌ Delete</button></div>`:"";
   const click=inBin?"":`onclick="openEditor('${id}')"`;
