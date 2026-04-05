@@ -248,7 +248,18 @@
 <div class="note-editor" id="noteEditor">
   <div class="editor-header">
     <button class="editor-back" onclick="closeEditor()">‹</button>
-    <span class="editor-cat-badge" id="editorCatBadge" onclick="openCatPicker()">📥 Unsorted</span>
+    <div style="position:relative;flex:1;min-width:0;">
+      <span class="editor-cat-badge" id="editorCatBadge" onclick="toggleCatDropdown()">📥 Unsorted ▾</span>
+      <div id="catDropdown" style="display:none;position:absolute;top:calc(100% + 6px);left:0;width:220px;background:var(--surface);border:1px solid var(--border);border-radius:12px;z-index:600;overflow:hidden;box-shadow:0 8px 24px rgba(0,0,0,.5);max-height:300px;overflow-y:auto;">
+        <div id="catDropdownList"></div>
+        <div style="border-top:1px solid var(--border);padding:10px 14px;">
+          <div id="catDropdownAddRow" style="display:flex;gap:8px;">
+            <input id="catDropdownInput" type="text" placeholder="New category..." maxlength="30" style="flex:1;padding:7px 10px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:13px;outline:none;font-family:inherit;" onclick="event.stopPropagation()"/>
+            <button onclick="confirmDropdownNewCat()" style="padding:7px 12px;background:var(--accent);color:#111;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;">Add</button>
+          </div>
+        </div>
+      </div>
+    </div>
     <button class="editor-top-btn" id="editorPinBtn" onclick="toggleEditorPin()">📌</button>
     <button class="editor-top-btn" id="editorTaskBtn" onclick="toggleEditorTask()">☐</button>
     <button class="editor-top-btn del" onclick="deleteFromEditor()">🗑️</button>
@@ -257,21 +268,6 @@
   <div class="editor-body">
     <input class="editor-title" type="text" id="editorTitle" placeholder="Title..."/>
     <textarea class="editor-textarea" id="editorTextarea" placeholder="Write your note..."></textarea>
-  </div>
-</div>
-
-<!-- CAT PICKER SHEET -->
-<div class="sheet-overlay" id="catPickerSheet" onclick="handleCatPickerOverlayClick(event)">
-  <div class="sheet">
-    <div class="sheet-handle"></div>
-    <div class="sheet-title">Change Category</div>
-    <div class="cat-picker-list" id="catPickerList"></div>
-    <div class="cat-picker-divider"></div>
-    <div class="cat-picker-add" onclick="openInlineCatAdd()"><span style="font-size:20px;">＋</span> New category</div>
-    <div class="new-cat-row" id="pickerNewCatRow" style="margin-top:6px;">
-      <input type="text" id="pickerNewCatInput" placeholder="Category name..." maxlength="30"/>
-      <button onclick="confirmPickerNewCat()">Add</button>
-    </div>
   </div>
 </div>
 
@@ -476,7 +472,7 @@ function openEditor(id){
   document.getElementById("editorTextarea").value=note.text;
   const color=getCatColor(note.cat);
   const badge=document.getElementById("editorCatBadge");
-  badge.textContent=getCatIcon(note.cat||"")+" "+(note.cat||"Unsorted");
+  badge.textContent=getCatIcon(note.cat||"")+" "+(note.cat||"Unsorted")+" ▾";
   badge.style.color=color;badge.style.borderColor=color+"88";
   document.getElementById("editorAutosave").textContent="✓";
   const pinBtn=document.getElementById("editorPinBtn");
@@ -487,6 +483,7 @@ function openEditor(id){
   setTimeout(()=>document.getElementById("editorTextarea").focus(),150);
 }
 function closeEditor(){
+  closeCatDropdown();
   document.getElementById("noteEditor").classList.remove("open");
   clearTimeout(autoSaveTimer);editingNoteId=null;renderMain();
 }
@@ -520,56 +517,59 @@ document.getElementById("editorTitle").addEventListener("keydown",e=>{if(e.key==
 document.getElementById("noteTitleInput").addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();document.getElementById("noteInput").focus();}});
 
 /* CAT PICKER — fixed: always use editingNoteId at call time */
-function openCatPicker(){
+/* CAT DROPDOWN */
+function toggleCatDropdown(){
+  const dd=document.getElementById("catDropdown");
+  if(dd.style.display==="none"){openCatDropdown();}else{closeCatDropdown();}
+}
+function openCatDropdown(){
   if(!editingNoteId)return;
   const currentNote=loadNotes().find(n=>n.id===editingNoteId);
   const currentCat=currentNote?currentNote.cat:"";
   const cats=loadCats();
-  document.getElementById("catPickerList").innerHTML=cats.map((cat,i)=>{
+  document.getElementById("catDropdownList").innerHTML=cats.map((cat,i)=>{
     const safe=cat.name.replace(/\\/g,"\\\\").replace(/'/g,"\\'");
-    const sel=cat.name===currentCat?"selected":"";
     const color=CAT_COLORS[i%CAT_COLORS.length];
-    return `<div class="cat-picker-item ${sel}" onclick="changeNoteCat('${safe}')">
-      <span style="width:12px;height:12px;border-radius:50%;background:${color};flex-shrink:0;display:inline-block;"></span>
-      <span style="font-size:18px;">${cat.icon}</span>
-      <span>${escHtml(cat.name)}</span>
-      ${sel?'<span style="margin-left:auto;color:var(--accent);">✓</span>':""}
+    const isSel=cat.name===currentCat;
+    return `<div onclick="changeNoteCat('${safe}')" style="display:flex;align-items:center;gap:10px;padding:11px 14px;cursor:pointer;background:${isSel?"var(--surface2)":"transparent"};">
+      <span style="width:10px;height:10px;border-radius:50%;background:${color};flex-shrink:0;display:inline-block;"></span>
+      <span style="font-size:16px;">${cat.icon}</span>
+      <span style="font-size:14px;color:${isSel?"var(--accent)":"var(--text2)"};">${escHtml(cat.name)}</span>
+      ${isSel?'<span style="margin-left:auto;color:var(--accent);font-size:14px;">✓</span>':""}
     </div>`;
   }).join("");
-  document.getElementById("pickerNewCatRow").classList.remove("visible");
-  document.getElementById("pickerNewCatInput").value="";
-  document.getElementById("catPickerSheet").classList.add("open");
+  document.getElementById("catDropdownInput").value="";
+  document.getElementById("catDropdown").style.display="block";
+  // close when tapping outside
+  setTimeout(()=>document.addEventListener("click",outsideCatDropdownClick),10);
+}
+function outsideCatDropdownClick(e){
+  const dd=document.getElementById("catDropdown");
+  const badge=document.getElementById("editorCatBadge");
+  if(!dd.contains(e.target)&&!badge.contains(e.target)){closeCatDropdown();}
+}
+function closeCatDropdown(){
+  document.getElementById("catDropdown").style.display="none";
+  document.removeEventListener("click",outsideCatDropdownClick);
 }
 function changeNoteCat(cat){
-  // snapshot the editing id immediately
-  const id=editingNoteId;
-  closeCatPicker();
-  if(!id)return;
+  closeCatDropdown();
+  const id=editingNoteId; if(!id)return;
   const notes=loadNotes(),note=notes.find(n=>n.id===id);
   if(note){note.cat=cat;note.aiPending=false;saveNotesArr(notes);}
-  // update badge if still in editor
-  if(editingNoteId===id){
-    const color=getCatColor(cat);
-    const badge=document.getElementById("editorCatBadge");
-    badge.textContent=getCatIcon(cat)+" "+cat;
-    badge.style.color=color;badge.style.borderColor=color+"88";
-  }
-  renderSidebarCats();renderMain();
+  const color=getCatColor(cat);
+  const badge=document.getElementById("editorCatBadge");
+  badge.textContent=getCatIcon(cat)+" "+cat+" ▾";
+  badge.style.color=color; badge.style.borderColor=color+"88";
+  renderSidebarCats(); renderMain();
 }
-function closeCatPicker(){document.getElementById("catPickerSheet").classList.remove("open");}
-function handleCatPickerOverlayClick(e){if(e.target===document.getElementById("catPickerSheet"))closeCatPicker();}
-function openInlineCatAdd(){
-  const row=document.getElementById("pickerNewCatRow");row.classList.add("visible");
-  setTimeout(()=>document.getElementById("pickerNewCatInput").focus(),100);
-}
-function confirmPickerNewCat(){
-  const input=document.getElementById("pickerNewCatInput"),name=input.value.trim();if(!name)return;
+function confirmDropdownNewCat(){
+  const input=document.getElementById("catDropdownInput"),name=input.value.trim();if(!name)return;
   const cats=loadCats();
   if(!cats.find(c=>c.name===name)){cats.push({name,icon:"📝"});saveCatsArr(cats);suggestIconForCat(name);}
-  input.value="";document.getElementById("pickerNewCatRow").classList.remove("visible");
   changeNoteCat(name);
 }
-document.getElementById("pickerNewCatInput").addEventListener("keydown",e=>{if(e.key==="Enter")confirmPickerNewCat();});
+document.getElementById("catDropdownInput").addEventListener("keydown",e=>{if(e.key==="Enter")confirmDropdownNewCat();});
 
 /* ADD NOTE */
 function toggleTaskMode(){
