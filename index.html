@@ -573,7 +573,7 @@ function changeNoteCat(cat){
 function confirmDropdownNewCat(){
   const input=document.getElementById("catDropdownInput"),name=input.value.trim();if(!name)return;
   const cats=loadCats();
-  if(!cats.find(c=>c.name===name)){cats.push({name,icon:"📝"});saveCatsArr(cats);suggestIconForCat(name);}
+  if(!cats.find(c=>c.name===name)){cats.push({name,icon:"📝",iconPending:true});saveCatsArr(cats);suggestIconForCat(name);}
   changeNoteCat(name);
 }
 document.getElementById("catDropdownInput").addEventListener("keydown",e=>{if(e.key==="Enter")confirmDropdownNewCat();});
@@ -612,7 +612,7 @@ function selectModalCat(cat){selectedCat=cat;renderModalPills();}
 function toggleNewCatRow(){const row=document.getElementById("newCatRow");row.classList.toggle("visible",!row.classList.contains("visible"));if(row.classList.contains("visible"))document.getElementById("newCatInput").focus();}
 function confirmNewCat(){
   const input=document.getElementById("newCatInput"),name=input.value.trim();if(!name)return;
-  const cats=loadCats();if(!cats.find(c=>c.name===name)){cats.push({name,icon:"📝"});saveCatsArr(cats);suggestIconForCat(name);}
+  const cats=loadCats();if(!cats.find(c=>c.name===name)){cats.push({name,icon:"📝",iconPending:true});saveCatsArr(cats);suggestIconForCat(name);}
   selectedCat=name;input.value="";document.getElementById("newCatRow").classList.remove("visible");
   renderModalPills();renderSidebarCats();
 }
@@ -653,14 +653,15 @@ async function runBackgroundAI(noteId,text,title){
     const allNotes=loadNotes(),note=allNotes.find(n=>n.id===noteId);
     if(note){
       note.cat=raw;note.aiPending=false;
-      if(raw!=="Unsorted"){const allCats=loadCats();if(!allCats.find(c=>c.name===raw)){allCats.push({name:raw,icon:"📝"});saveCatsArr(allCats);suggestIconForCat(raw);}}
+      if(raw!=="Unsorted"){const allCats=loadCats();if(!allCats.find(c=>c.name===raw)){allCats.push({name:raw,icon:"📝",iconPending:true});saveCatsArr(allCats);suggestIconForCat(raw);}}
       saveNotesArr(allNotes);renderSidebarCats();renderMain();
     }
   }catch(e){}
 }
 function retryPendingAI(){const apiKey=getApiKey();if(!apiKey)return;loadNotes().filter(n=>n.aiPending&&!n.deleted).forEach(n=>runBackgroundAI(n.id,n.text,n.title||""));}
-window.addEventListener("online",retryPendingAI);
-document.addEventListener("visibilitychange",()=>{if(!document.hidden)retryPendingAI();});
+function retryAll(){retryPendingAI();retryPendingIcons();}
+window.addEventListener("online",retryAll);
+document.addEventListener("visibilitychange",()=>{if(!document.hidden)retryAll();});
 
 /* SUGGEST ICON */
 async function suggestIconForCat(catName){
@@ -671,8 +672,13 @@ async function suggestIconForCat(catName){
     if(!res.ok)return;
     const data=await res.json(),icon=(data?.content?.[0]?.text||"").trim().slice(0,2);if(!icon)return;
     const cats=loadCats(),cat=cats.find(c=>c.name===catName);
-    if(cat){cat.icon=icon;saveCatsArr(cats);renderSidebarCats();renderModalPills();renderMain();}
+    if(cat){cat.icon=icon;cat.iconPending=false;saveCatsArr(cats);renderSidebarCats();renderModalPills();renderMain();}
   }catch(e){}
+}
+
+function retryPendingIcons(){
+  const apiKey=getApiKey();if(!apiKey)return;
+  loadCats().filter(c=>c.iconPending).forEach(c=>suggestIconForCat(c.name));
 }
 
 /* SETTINGS */
@@ -685,7 +691,7 @@ function openSettings(){
 function closeSettings(){document.getElementById("settingsModal").classList.remove("open");}
 function saveKey(){
   const val=document.getElementById("keyInput").value.trim();if(!val){alert("Paste your API key first.");return;}
-  localStorage.setItem(API_KEY_KEY,val);document.getElementById("keyStatus").textContent="✓ Key saved!";document.getElementById("keyStatus").className="key-status saved";retryPendingAI();
+  localStorage.setItem(API_KEY_KEY,val);document.getElementById("keyStatus").textContent="✓ Key saved!";document.getElementById("keyStatus").className="key-status saved";retryAll();
 }
 function clearKey(){if(!confirm("Remove API key?"))return;localStorage.removeItem(API_KEY_KEY);document.getElementById("keyInput").value="";document.getElementById("keyStatus").textContent="";document.getElementById("keyStatus").className="key-status";}
 function clearAllNotes(){if(!confirm("Delete ALL notes permanently?"))return;localStorage.removeItem(NOTES_KEY);closeSettings();renderMain();}
@@ -792,7 +798,7 @@ function buildStatsPage(){
 }
 
 /* INIT */
-setView("pinned");renderSidebarCats();setTimeout(retryPendingAI,1200);
+setView("pinned");renderSidebarCats();setTimeout(retryAll,1200);
 
 // Close sidebar only when tapping the dim overlay, not the sidebar itself
 document.getElementById("sidebarOverlay").addEventListener("click", closeSidebar);
