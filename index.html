@@ -69,6 +69,28 @@
     .empty-state{text-align:center;color:var(--text3);padding:4rem 1rem;font-size:15px;line-height:2;}
     .search-results-label{font-size:13px;color:var(--text3);margin-bottom:12px;}
 
+    /* SELECTION MODE */
+    .note-card.selected{outline:2px solid var(--accent);background:#1a2535;}
+    .note-card.selected.pinned{background:#1a2535;}
+    .note-card.selected.is-task{background:#1a2535;}
+    .sel-check{position:absolute;top:8px;right:8px;width:20px;height:20px;border-radius:50%;border:2px solid var(--text3);background:var(--surface2);display:none;align-items:center;justify-content:center;font-size:12px;color:#111;font-weight:700;flex-shrink:0;}
+    .selection-mode .sel-check{display:flex;}
+    .note-card.selected .sel-check{background:var(--accent);border-color:var(--accent);}
+    .note-card{position:relative;}
+
+    /* SELECTION TOOLBAR (replaces normal header in selection mode) */
+    .sel-header{display:none;height:var(--header-h);background:var(--surface);border-bottom:1px solid var(--border);align-items:center;padding:0 16px;gap:10px;flex-shrink:0;z-index:100;}
+    .sel-header.active{display:flex;}
+    .header.hidden{display:none;}
+    .sel-count{font-size:16px;font-weight:600;color:var(--text);flex:1;}
+    .sel-btn{background:none;border:1px solid var(--border);border-radius:20px;padding:7px 14px;font-size:13px;color:var(--text2);cursor:pointer;white-space:nowrap;}
+    .sel-btn:hover{border-color:var(--text2);}
+    .sel-btn.danger{border-color:#ff6b6b;color:#ff6b6b;}
+    .sel-btn.accent{border-color:var(--accent);color:var(--accent);}
+
+    /* BULK MOVE DROPDOWN */
+    #bulkCatDropdown{display:none;position:fixed;top:64px;left:16px;width:240px;background:var(--surface);border:1px solid var(--border);border-radius:14px;z-index:9999;box-shadow:0 8px 32px rgba(0,0,0,.7);max-height:320px;overflow-y:auto;}
+
     /* FAB */
     .fab{position:fixed;bottom:28px;right:24px;width:56px;height:56px;border-radius:50%;background:var(--accent);color:#111;border:none;font-size:30px;cursor:pointer;z-index:150;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(138,180,248,.3);transition:transform .15s;}
     .fab:active{transform:scale(.92);}
@@ -202,8 +224,8 @@
   <div class="sidebar-item" onclick="openSettings()"><span class="icon">⚙️</span> Settings</div>
 </div>
 
-<!-- HEADER -->
-<div class="header">
+<!-- NORMAL HEADER -->
+<div class="header" id="normalHeader">
   <button class="hamburger" onclick="toggleSidebar()">☰</button>
   <span class="header-title" id="headerTitle">Home</span>
   <div class="search-wrap">
@@ -213,11 +235,24 @@
   </div>
 </div>
 
+<!-- SELECTION HEADER (shown during selection mode) -->
+<div class="sel-header" id="selHeader">
+  <button class="sel-btn" onclick="exitSelectionMode()">✕ Cancel</button>
+  <span class="sel-count" id="selCount">0 selected</span>
+  <button class="sel-btn accent" id="selMoveBtn" onclick="openBulkCatDropdown()" style="display:none;">📁 Move</button>
+  <button class="sel-btn" id="selRestoreBtn" onclick="bulkRestore()" style="display:none;">↩️ Restore</button>
+  <button class="sel-btn danger" id="selPermDeleteBtn" onclick="bulkPermDelete()" style="display:none;">❌ Delete</button>
+  <button class="sel-btn danger" id="selDeleteBtn" onclick="bulkDelete()" style="display:none;">🗑️ Bin</button>
+</div>
+
+<!-- BULK MOVE DROPDOWN -->
+<div id="bulkCatDropdown"></div>
+
 <!-- MAIN -->
 <div class="body"><div class="main" id="mainContent"></div></div>
 
 <!-- FAB -->
-<button class="fab" onclick="openAddModal()">＋</button>
+<button class="fab" id="fab-btn" onclick="openAddModal()">＋</button>
 
 <!-- ADD NOTE SHEET -->
 <div class="sheet-overlay" id="addModal">
@@ -305,6 +340,11 @@ const MONTHS=["January","February","March","April","May","June","July","August",
 
 let currentView="pinned",selectedCat=null,isTaskMode=false,editingNoteId=null,searchQuery="",autoSaveTimer=null,longPressTimer=null,pendingDeleteId=null;
 
+/* SELECTION MODE STATE */
+let selectionMode=false;
+let selectedIds=new Set();
+let selectionInBin=false;
+
 /* HELPERS */
 function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6);}
 function getApiKey(){return localStorage.getItem(API_KEY_KEY)||"";}
@@ -364,6 +404,7 @@ function deleteCategory(cat){
   setView("pinned");
 }
 function setView(view){
+  if(selectionMode)exitSelectionMode();
   currentView=view;closeSidebar();clearSearch();
   document.querySelectorAll(".sidebar-item").forEach(el=>el.classList.remove("active"));
   const map={pinned:"Home",bin:"Bin",tasks:"Tasks",stats:"Stats"};
@@ -426,14 +467,26 @@ function noteCard(note,inBin=false,query=""){
   const titleHtml=note.title?`<div class="note-card-title">${query?highlightText(note.title,query):escHtml(note.title)}</div>`:"";
   const bodyHtml=query?highlightText(note.text,query):escHtml(note.text);
   const unsorted=note.cat==="Unsorted"&&note.aiPending?`<div class="unsorted-badge">⏳ AI sorting...</div>`:"";
-  // colored tag — no text label, just icon + name in pill  (name kept for context but category TEXT row removed)
   const tagHtml=`<div class="cat-tag" style="background:${color};width:32px;height:6px;border-radius:3px;padding:0;" title="${escHtml(note.cat||"Unsorted")}"></div>`;
-  let cardClass="note-card"+(note.pinned&&!inBin?" pinned":"")+(note.isTask?" is-task":"");
-  const binActions=inBin?`<div style="display:flex;gap:6px;margin-top:8px;"><button style="flex:1;padding:8px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text2);font-size:13px;cursor:pointer;" onclick="event.stopPropagation();restoreNote('${id}')">↩️ Restore</button><button style="flex:1;padding:8px;background:#3a1010;border:1px solid #6a2020;border-radius:8px;color:#ff6b6b;font-size:13px;cursor:pointer;" onclick="event.stopPropagation();permDelete('${id}')">❌ Delete</button></div>`:"";
-  const click=inBin?"":`onclick="openEditor('${id}')"`;
-  const lp=inBin?"":` ontouchstart="startLongPress('${id}',event)" ontouchend="cancelLongPress()" ontouchcancel="cancelLongPress()" onmousedown="startLongPress('${id}',event)" onmouseup="cancelLongPress()" onmouseleave="cancelLongPress()"`;
-  return `<div class="${cardClass}" id="card-${id}" style="border-left-color:${color};" ${click}${lp}>
-    ${unsorted}${titleHtml}
+  const isSel=selectedIds.has(id);
+  let cardClass="note-card"+(note.pinned&&!inBin?" pinned":"")+(note.isTask?" is-task":"")+(isSel?" selected":"");
+
+  const binActions=inBin&&!selectionMode?`<div style="display:flex;gap:6px;margin-top:8px;">
+    <button style="flex:1;padding:8px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text2);font-size:13px;cursor:pointer;" onclick="event.stopPropagation();restoreNote('${id}')">↩️ Restore</button>
+    <button style="flex:1;padding:8px;background:#3a1010;border:1px solid #6a2020;border-radius:8px;color:#ff6b6b;font-size:13px;cursor:pointer;" onclick="event.stopPropagation();permDelete('${id}')">❌ Delete</button>
+  </div>`:"";
+
+  // In selection mode: tap toggles selection. Outside: tap opens editor (or nothing for bin)
+  const clickHandler=selectionMode
+    ? `onclick="toggleSelect('${id}')"`
+    : inBin ? "" : `onclick="openEditor('${id}')"`;
+
+  const lp=selectionMode?"":` ontouchstart="startLongPress('${id}',${inBin},event)" ontouchend="cancelLongPress()" ontouchcancel="cancelLongPress()" onmousedown="startLongPress('${id}',${inBin},event)" onmouseup="cancelLongPress()" onmouseleave="cancelLongPress()"`;
+
+  const checkHtml=`<div class="sel-check">${isSel?"✓":""}</div>`;
+
+  return `<div class="${cardClass}" id="card-${id}" style="border-left-color:${color};" ${clickHandler}${lp}>
+    ${checkHtml}${unsorted}${titleHtml}
     <div class="note-card-text">${bodyHtml}</div>
     ${tagHtml}
     <div class="note-card-time">${fmtDate(note.ts)}</div>
@@ -441,13 +494,130 @@ function noteCard(note,inBin=false,query=""){
   </div>`;
 }
 
-/* LONG PRESS */
-function startLongPress(id,e){
+/* LONG PRESS — now enters selection mode */
+function startLongPress(id,inBin,e){
   cancelLongPress();
   const card=document.getElementById("card-"+id);if(card)card.classList.add("pressing");
-  longPressTimer=setTimeout(()=>{cancelLongPress();showDeleteConfirm(id);},700);
+  longPressTimer=setTimeout(()=>{
+    cancelLongPress();
+    enterSelectionMode(id,inBin);
+  },700);
 }
 function cancelLongPress(){clearTimeout(longPressTimer);longPressTimer=null;document.querySelectorAll(".note-card.pressing").forEach(c=>c.classList.remove("pressing"));}
+
+/* SELECTION MODE */
+function enterSelectionMode(firstId,inBin){
+  selectionMode=true;
+  selectionInBin=inBin;
+  selectedIds=new Set([firstId]);
+  document.getElementById("normalHeader").classList.add("hidden");
+  document.getElementById("selHeader").classList.add("active");
+  document.getElementById("mainContent").classList.add("selection-mode");
+  document.getElementById("fab-btn").style.display="none";
+  updateSelectionToolbar();
+  renderMain();
+}
+
+function exitSelectionMode(){
+  selectionMode=false;
+  selectionInBin=false;
+  selectedIds=new Set();
+  document.getElementById("normalHeader").classList.remove("hidden");
+  document.getElementById("selHeader").classList.remove("active");
+  document.getElementById("mainContent").classList.remove("selection-mode");
+  document.getElementById("fab-btn").style.display="";
+  closeBulkCatDropdown();
+  renderMain();
+}
+
+function toggleSelect(id){
+  if(selectedIds.has(id))selectedIds.delete(id);
+  else selectedIds.add(id);
+  if(selectedIds.size===0){exitSelectionMode();return;}
+  updateSelectionToolbar();
+  // update just this card's appearance without full re-render
+  const note=loadNotes().find(n=>n.id===id);
+  const card=document.getElementById("card-"+id);
+  if(card){
+    card.classList.toggle("selected",selectedIds.has(id));
+    const chk=card.querySelector(".sel-check");
+    if(chk)chk.textContent=selectedIds.has(id)?"✓":"";
+  }
+}
+
+function updateSelectionToolbar(){
+  const count=selectedIds.size;
+  document.getElementById("selCount").textContent=count+" selected";
+  // show correct buttons based on bin or not
+  document.getElementById("selMoveBtn").style.display=selectionInBin?"none":"";
+  document.getElementById("selDeleteBtn").style.display=selectionInBin?"none":"";
+  document.getElementById("selRestoreBtn").style.display=selectionInBin?"":"none";
+  document.getElementById("selPermDeleteBtn").style.display=selectionInBin?"":"none";
+}
+
+/* BULK ACTIONS */
+function bulkDelete(){
+  if(!selectedIds.size)return;
+  if(!confirm(`Move ${selectedIds.size} note${selectedIds.size>1?"s":""} to bin?`))return;
+  const notes=loadNotes();
+  notes.forEach(n=>{if(selectedIds.has(n.id)){n.deleted=true;n.pinned=false;}});
+  saveNotesArr(notes);
+  exitSelectionMode();
+}
+
+function bulkRestore(){
+  if(!selectedIds.size)return;
+  const notes=loadNotes();
+  notes.forEach(n=>{if(selectedIds.has(n.id))n.deleted=false;});
+  saveNotesArr(notes);
+  exitSelectionMode();
+}
+
+function bulkPermDelete(){
+  if(!selectedIds.size)return;
+  if(!confirm(`Permanently delete ${selectedIds.size} note${selectedIds.size>1?"s":""}? This cannot be undone.`))return;
+  saveNotesArr(loadNotes().filter(n=>!selectedIds.has(n.id)));
+  exitSelectionMode();
+}
+
+function openBulkCatDropdown(){
+  const cats=loadCats();
+  const dd=document.getElementById("bulkCatDropdown");
+  dd.innerHTML=`<div style="padding:12px 14px;font-size:13px;font-weight:600;color:var(--text3);border-bottom:1px solid var(--border);">Move ${selectedIds.size} note${selectedIds.size>1?"s":""} to...</div>`+
+    cats.map((cat,i)=>{
+      const safe=cat.name.replace(/\\/g,"\\\\").replace(/'/g,"\\'");
+      const color=CAT_COLORS[i%CAT_COLORS.length];
+      return `<div onclick="bulkMoveToCategory('${safe}')" style="display:flex;align-items:center;gap:10px;padding:11px 14px;cursor:pointer;">
+        <span style="width:10px;height:10px;border-radius:50%;background:${color};flex-shrink:0;display:inline-block;"></span>
+        <span style="font-size:16px;">${cat.icon}</span>
+        <span style="font-size:14px;color:var(--text2);">${escHtml(cat.name)}</span>
+      </div>`;
+    }).join("");
+  dd.style.display="block";
+  setTimeout(()=>document.addEventListener("click",outsideBulkDropdownClick),10);
+}
+
+function outsideBulkDropdownClick(e){
+  const dd=document.getElementById("bulkCatDropdown");
+  const btn=document.getElementById("selMoveBtn");
+  if(!dd.contains(e.target)&&!btn.contains(e.target))closeBulkCatDropdown();
+}
+
+function closeBulkCatDropdown(){
+  document.getElementById("bulkCatDropdown").style.display="none";
+  document.removeEventListener("click",outsideBulkDropdownClick);
+}
+
+function bulkMoveToCategory(cat){
+  closeBulkCatDropdown();
+  const notes=loadNotes();
+  notes.forEach(n=>{if(selectedIds.has(n.id)){n.cat=cat;n.aiPending=false;}});
+  saveNotesArr(notes);
+  renderSidebarCats();
+  exitSelectionMode();
+}
+
+/* DELETE CONFIRM (single note from editor) */
 function showDeleteConfirm(id){
   pendingDeleteId=id;
   const note=loadNotes().find(n=>n.id===id),preview=(note?(note.title||note.text||""):"").slice(0,50);
@@ -457,7 +627,7 @@ function showDeleteConfirm(id){
 function closeDeleteConfirm(){document.getElementById("deleteConfirm").classList.remove("open");pendingDeleteId=null;}
 function confirmDelete(){
   if(!pendingDeleteId)return;
-  const wasEditing = editingNoteId === pendingDeleteId;
+  const wasEditing=editingNoteId===pendingDeleteId;
   if(wasEditing)closeEditor();
   deleteNote(pendingDeleteId);
   closeDeleteConfirm();
