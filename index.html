@@ -294,11 +294,11 @@
 </div>
 
 <!-- CAT DROPDOWN — fixed position, outside editor so it's never clipped -->
-<div id="catDropdown" style="display:none;position:fixed;top:64px;left:16px;width:240px;background:var(--surface);border:1px solid var(--border);border-radius:14px;z-index:9999;box-shadow:0 8px 32px rgba(0,0,0,.7);max-height:320px;overflow-y:auto;">
+<div id="catDropdown" style="display:none;position:fixed;top:64px;left:16px;width:240px;max-width:calc(100vw - 32px);background:var(--surface);border:1px solid var(--border);border-radius:14px;z-index:9999;box-shadow:0 8px 32px rgba(0,0,0,.7);max-height:320px;overflow-y:auto;overflow-x:hidden;">
   <div id="catDropdownList"></div>
-  <div style="border-top:1px solid var(--border);padding:10px 14px;display:flex;gap:8px;">
-    <input id="catDropdownInput" type="text" placeholder="New category..." maxlength="30" style="flex:1;padding:7px 10px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:13px;outline:none;font-family:inherit;" onclick="event.stopPropagation()"/>
-    <button onclick="confirmDropdownNewCat()" style="padding:7px 12px;background:var(--accent);color:#111;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;">Add</button>
+  <div style="border-top:1px solid var(--border);padding:8px 10px;display:flex;gap:6px;">
+    <input id="catDropdownInput" type="text" placeholder="New category..." maxlength="30" style="flex:1;min-width:0;padding:6px 8px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:12px;outline:none;font-family:inherit;" onclick="event.stopPropagation()"/>
+    <button onclick="confirmDropdownNewCat()" style="padding:6px 10px;background:var(--accent);color:#111;border:none;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;flex-shrink:0;">Add</button>
   </div>
 </div>
 
