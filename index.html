@@ -42,7 +42,6 @@
     .sidebar-cat-row{display:flex;align-items:center;margin-right:12px;}
     .sidebar-cat-row .sidebar-item{flex:1;margin-right:0;border-radius:0 24px 24px 0;}
     .cat-color-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
-    .cat-delete-btn{display:none;}
 
     /* MAIN */
     .body{display:flex;flex:1;overflow:hidden;}
@@ -335,7 +334,6 @@
 const NOTES_KEY="sn_notes_v5",CATS_KEY="sn_cats_v5",API_KEY_KEY="sn_apikey",CLAUDE_LABEL="Ask Claude";
 const CAT_COLORS=["#e05c5c","#e07c3a","#d4a017","#7cb87c","#4aab8a","#4a9fd4","#6a7fd4","#9b6ad4","#d46aa0","#d4a06a","#5cb8b8","#b85c8a","#8ab85c","#5c8ab8","#b8a05c","#7a5cb8","#b85c5c","#5cb87a","#b8875c","#5c9ab8"];
 const DEFAULT_CATS=[{name:"Health",icon:"❤️"},{name:"Finances",icon:"💰"},{name:"Movies",icon:"🎬"},{name:"Shopping",icon:"🛒"},{name:"Learn",icon:"📚"},{name:"Stocks",icon:"📈"},{name:"Unsorted",icon:"📥"}];
-const ICON_OPTIONS=["📥","📝","💡","❤️","💰","🎬","🛒","📚","📈","✈️","🏋️","🎵","🍔","🏠","💼","🎮","📸","🌿","⚡","🔧","🎯","🤝","🐾","🌍","🎂","🎉","🏆","⚽","🎨","🔬"];
 const MONTHS=["January","February","March","April","May","June","July","August","September","October","November","December"];
 const PROTECTED_CATS=["Unsorted"]; // Categories that cannot be deleted
 
@@ -391,16 +389,11 @@ function renderSidebarCats(){
     const safe=cat.name.replace(/\\/g,"\\\\").replace(/'/g,"\\'");
     const active=currentView==="cat:"+cat.name?"active":"";
     const color=CAT_COLORS[i%CAT_COLORS.length];
-    // Only show delete button for non-protected categories
-    const deleteBtn=isProtectedCat(cat.name)
-      ? ""
-      : `<button class="cat-delete-btn" onclick="event.stopPropagation();deleteCategory('${safe}')">✕</button>`;
     return `<div class="sidebar-cat-row">
       <div class="sidebar-item ${active}" onclick="event.stopPropagation();setView('cat:${safe}')" ontouchend="event.stopPropagation();event.preventDefault();setView('cat:${safe}')">
         <span class="cat-color-dot" style="background:${color};"></span>
         <span>${cat.icon} ${escHtml(cat.name)}</span>
       </div>
-      ${deleteBtn}
     </div>`;
   }).join("");}
 
@@ -843,8 +836,7 @@ document.addEventListener("visibilitychange",()=>{if(!document.hidden)retryAll()
 async function suggestIconForCat(catName){
   const apiKey=getApiKey();if(!apiKey)return;
   try{
-    const icons=ICON_OPTIONS.join(" ");
-    const res=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json","x-api-key":apiKey,"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},body:JSON.stringify({model:"claude-haiku-4-5-20251001",max_tokens:5,messages:[{role:"user",content:`Pick ONE emoji from this list for the category "${catName}": ${icons}\nReply with only the emoji.`}]})});
+    const res=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json","x-api-key":apiKey,"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},body:JSON.stringify({model:"claude-haiku-4-5-20251001",max_tokens:5,messages:[{role:"user",content:`Pick the single most fitting emoji for a notes category called "${catName}". Reply with only the emoji, nothing else.`}]})});
     if(!res.ok)return;
     const data=await res.json(),icon=(data?.content?.[0]?.text||"").trim().slice(0,2);if(!icon)return;
     const cats=loadCats(),cat=cats.find(c=>c.name===catName);
