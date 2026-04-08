@@ -284,7 +284,8 @@
     <button class="editor-top-btn" id="editorPinBtn" onclick="toggleEditorPin()">📌</button>
     <button class="editor-top-btn" id="editorTaskBtn" onclick="toggleEditorTask()">☐</button>
     <button class="editor-top-btn del" onclick="deleteFromEditor()">🗑️</button>
-    <span class="editor-autosave" id="editorAutosave">✓</span>
+    <button class="editor-top-btn" id="editorDoneBtn" onclick="dismissKeyboard()">✓</button>
+    <span class="editor-autosave" id="editorAutosave"></span>
   </div>
   <div class="editor-body">
     <input class="editor-title" type="text" id="editorTitle" placeholder="Title..."/>
@@ -960,6 +961,10 @@ document.getElementById("sidebarOverlay").addEventListener("touchend", function(
   e.preventDefault();
   closeSidebar();
 });
+
+function dismissKeyboard() {
+  document.activeElement.blur();
+}
 </script>
 </body>
 </html>
