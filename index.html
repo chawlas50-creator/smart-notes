@@ -337,6 +337,7 @@ const CAT_COLORS=["#e05c5c","#e07c3a","#d4a017","#7cb87c","#4aab8a","#4a9fd4","#
 const DEFAULT_CATS=[{name:"Health",icon:"❤️"},{name:"Finances",icon:"💰"},{name:"Movies",icon:"🎬"},{name:"Shopping",icon:"🛒"},{name:"Learn",icon:"📚"},{name:"Stocks",icon:"📈"},{name:"Unsorted",icon:"📥"}];
 const ICON_OPTIONS=["📥","📝","💡","❤️","💰","🎬","🛒","📚","📈","✈️","🏋️","🎵","🍔","🏠","💼","🎮","📸","🌿","⚡","🔧","🎯","🤝","🐾","🌍","🎂","🎉","🏆","⚽","🎨","🔬"];
 const MONTHS=["January","February","March","April","May","June","July","August","September","October","November","December"];
+const PROTECTED_CATS=["Unsorted"]; // Categories that cannot be deleted
 
 let currentView="pinned",selectedCat=null,isTaskMode=false,editingNoteId=null,searchQuery="",autoSaveTimer=null,longPressTimer=null,pendingDeleteId=null;
 
@@ -361,6 +362,7 @@ function getCatColor(name){
 function escHtml(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
 function highlightText(t,q){const e=escHtml(t);if(!q)return e;return e.replace(new RegExp(q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'),'gi'),m=>`<span class="highlight">${m}</span>`);}
 function fmtDate(ts){return new Date(ts).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});}
+function isProtectedCat(name){return PROTECTED_CATS.includes(name);}
 
 /* TIMELINE */
 function getTimelineGroup(ts){
@@ -389,15 +391,21 @@ function renderSidebarCats(){
     const safe=cat.name.replace(/\\/g,"\\\\").replace(/'/g,"\\'");
     const active=currentView==="cat:"+cat.name?"active":"";
     const color=CAT_COLORS[i%CAT_COLORS.length];
+    // Only show delete button for non-protected categories
+    const deleteBtn=isProtectedCat(cat.name)
+      ? ""
+      : `<button class="cat-delete-btn" onclick="event.stopPropagation();deleteCategory('${safe}')">✕</button>`;
     return `<div class="sidebar-cat-row">
       <div class="sidebar-item ${active}" onclick="event.stopPropagation();setView('cat:${safe}')" ontouchend="event.stopPropagation();event.preventDefault();setView('cat:${safe}')">
         <span class="cat-color-dot" style="background:${color};"></span>
         <span>${cat.icon} ${escHtml(cat.name)}</span>
       </div>
-      <button class="cat-delete-btn" onclick="event.stopPropagation();deleteCategory('${safe}')">✕</button>
+      ${deleteBtn}
     </div>`;
   }).join("");}
+
 function deleteCategory(cat){
+  if(isProtectedCat(cat))return; // Safety guard
   if(!confirm(`Delete category "${cat}"?\nNotes will move to Unsorted.`))return;
   saveCatsArr(loadCats().filter(c=>c.name!==cat));
   const notes=loadNotes();notes.forEach(n=>{if(n.cat===cat)n.cat="Unsorted";});saveNotesArr(notes);
@@ -448,7 +456,10 @@ function renderMain(){
   }else if(currentView.startsWith("cat:")){
     const cat=currentView.slice(4),notes=all.filter(n=>n.cat===cat&&!n.deleted);
     const safe=cat.replace(/\\/g,"\\\\").replace(/'/g,"\\'");
-    const deleteBtn=`<div style="display:flex;justify-content:flex-end;margin-bottom:12px;"><button onclick="deleteCategory('${safe}')" style="background:none;border:1px solid #ff6b6b;color:#ff6b6b;border-radius:20px;padding:7px 16px;font-size:13px;cursor:pointer;">🗑️ Delete Category</button></div>`;
+    // Only show "Delete Category" button for non-protected categories
+    const deleteBtn=isProtectedCat(cat)
+      ? ""
+      : `<div style="display:flex;justify-content:flex-end;margin-bottom:12px;"><button onclick="deleteCategory('${safe}')" style="background:none;border:1px solid #ff6b6b;color:#ff6b6b;border-radius:20px;padding:7px 16px;font-size:13px;cursor:pointer;">🗑️ Delete Category</button></div>`;
     if(!notes.length){main.innerHTML=deleteBtn+`<div class="empty-state">${getCatIcon(cat)}<br>No notes in this category yet.</div>`;return;}
     html=deleteBtn+`<div class="notes-grid">${notes.map(n=>noteCard(n)).join("")}</div>`;
   }
@@ -476,7 +487,6 @@ function noteCard(note,inBin=false,query=""){
     <button style="flex:1;padding:8px;background:#3a1010;border:1px solid #6a2020;border-radius:8px;color:#ff6b6b;font-size:13px;cursor:pointer;" onclick="event.stopPropagation();permDelete('${id}')">❌ Delete</button>
   </div>`:"";
 
-  // In selection mode: tap toggles selection. Outside: tap opens editor (or nothing for bin)
   const clickHandler=selectionMode
     ? `onclick="toggleSelect('${id}')"`
     : inBin ? "" : `onclick="openEditor('${id}')"`;
@@ -535,7 +545,6 @@ function toggleSelect(id){
   else selectedIds.add(id);
   if(selectedIds.size===0){exitSelectionMode();return;}
   updateSelectionToolbar();
-  // update just this card's appearance without full re-render
   const note=loadNotes().find(n=>n.id===id);
   const card=document.getElementById("card-"+id);
   if(card){
@@ -548,7 +557,6 @@ function toggleSelect(id){
 function updateSelectionToolbar(){
   const count=selectedIds.size;
   document.getElementById("selCount").textContent=count+" selected";
-  // show correct buttons based on bin or not
   document.getElementById("selMoveBtn").style.display=selectionInBin?"none":"";
   document.getElementById("selDeleteBtn").style.display=selectionInBin?"none":"";
   document.getElementById("selRestoreBtn").style.display=selectionInBin?"":"none";
@@ -693,7 +701,6 @@ document.getElementById("editorTitle").addEventListener("input",triggerAutoSave)
 document.getElementById("editorTitle").addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();document.getElementById("editorTextarea").focus();}});
 document.getElementById("noteTitleInput").addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();document.getElementById("noteInput").focus();}});
 
-/* CAT PICKER — fixed: always use editingNoteId at call time */
 /* CAT DROPDOWN */
 function toggleCatDropdown(){
   const dd=document.getElementById("catDropdown");
@@ -717,7 +724,6 @@ function openCatDropdown(){
   }).join("");
   document.getElementById("catDropdownInput").value="";
   document.getElementById("catDropdown").style.display="block";
-  // close when tapping outside
   setTimeout(()=>document.addEventListener("click",outsideCatDropdownClick),10);
 }
 function outsideCatDropdownClick(e){
@@ -873,14 +879,12 @@ function buildStatsPage(){
   const notes=loadNotes().filter(n=>!n.deleted);
   const now=new Date(),todayStr=now.toDateString();
 
-  // counts
   const total=notes.length;
   const todayNotes=notes.filter(n=>new Date(n.ts).toDateString()===todayStr).length;
   const weekAgo=now-7*864e5,monthAgo=now-30*864e5;
   const weekNotes=notes.filter(n=>n.ts>=weekAgo).length;
   const monthNotes=notes.filter(n=>n.ts>=monthAgo).length;
 
-  // avg per day
   let avgPerDay=0;
   if(notes.length>0){
     const oldest=Math.min(...notes.map(n=>n.ts));
@@ -888,28 +892,23 @@ function buildStatsPage(){
     avgPerDay=(total/days).toFixed(1);
   }
 
-  // daily streak
   const daySet=new Set(notes.map(n=>new Date(n.ts).toDateString()));
   let streak=0;
   const check=new Date();
-  // if nothing today, start checking from yesterday
   if(!daySet.has(check.toDateString()))check.setDate(check.getDate()-1);
   while(daySet.has(check.toDateString())){streak++;check.setDate(check.getDate()-1);}
 
-  // notes by month (last 6 months)
   const monthMap={};
   notes.forEach(n=>{const d=new Date(n.ts),key=`${MONTHS[d.getMonth()].slice(0,3)} ${d.getFullYear()}`;monthMap[key]=(monthMap[key]||0)+1;});
   const monthEntries=Object.entries(monthMap).sort((a,b)=>b[1]-a[1]).slice(0,8);
   const maxMonth=Math.max(1,...monthEntries.map(e=>e[1]));
 
-  // category breakdown
   const catMap={};
   notes.forEach(n=>{const c=n.cat||"Unsorted";catMap[c]=(catMap[c]||0)+1;});
   const catEntries=Object.entries(catMap).sort((a,b)=>b[1]-a[1]);
   const cats=loadCats();
 
   wrap.innerHTML=`
-    <!-- overview -->
     <div class="stat-card">
       <div class="stat-card-title">Overview</div>
       <div class="stat-grid">
@@ -919,8 +918,6 @@ function buildStatsPage(){
         <div class="stat-cell"><div class="stat-cell-val">${monthNotes}</div><div class="stat-cell-lbl">This Month</div></div>
       </div>
     </div>
-
-    <!-- streak -->
     <div class="stat-card">
       <div class="stat-card-title">Daily Streak</div>
       <div class="streak-fire">${streak>0?"🔥":""}</div>
@@ -933,8 +930,6 @@ function buildStatsPage(){
         </div>
       </div>
     </div>
-
-    <!-- notes by month -->
     <div class="stat-card">
       <div class="stat-card-title">Notes by Month</div>
       ${monthEntries.length===0?'<div style="color:var(--text3);font-size:13px;">No data yet</div>':
@@ -945,8 +940,6 @@ function buildStatsPage(){
             <div class="month-count">${count}</div>
           </div>`).join("")}
     </div>
-
-    <!-- category breakdown -->
     <div class="stat-card">
       <div class="stat-card-title">Category Breakdown</div>
       ${catEntries.length===0?'<div style="color:var(--text3);font-size:13px;">No notes yet</div>':
@@ -970,7 +963,6 @@ function buildStatsPage(){
 /* INIT */
 setView("pinned");renderSidebarCats();setTimeout(retryAll,1200);
 
-// Close sidebar only when tapping the dim overlay, not the sidebar itself
 document.getElementById("sidebarOverlay").addEventListener("click", closeSidebar);
 document.getElementById("sidebarOverlay").addEventListener("touchend", function(e){
   e.preventDefault();
