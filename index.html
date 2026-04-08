@@ -16,7 +16,6 @@
     *{box-sizing:border-box;margin:0;padding:0;}
     body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);height:100vh;overflow:hidden;display:flex;flex-direction:column;}
 
-    /* HEADER */
     .header{height:var(--header-h);background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 16px;gap:10px;flex-shrink:0;z-index:100;}
     .hamburger{background:none;border:none;color:var(--text2);font-size:20px;cursor:pointer;padding:6px;border-radius:50%;}
     .header-title{font-size:18px;font-weight:600;color:var(--text);flex:1;}
@@ -27,7 +26,6 @@
     .search-clear{background:none;border:none;color:var(--text3);font-size:16px;cursor:pointer;padding:0;line-height:1;display:none;}
     .search-clear.visible{display:block;}
 
-    /* SIDEBAR */
     .sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:199;}
     .sidebar-overlay.open{display:block;}
     .sidebar{position:fixed;top:0;left:0;bottom:0;width:270px;background:var(--surface);border-right:1px solid var(--border);z-index:200;display:flex;flex-direction:column;transform:translateX(-100%);transition:transform .25s ease;overflow-y:auto;}
@@ -43,7 +41,6 @@
     .sidebar-cat-row .sidebar-item{flex:1;margin-right:0;border-radius:0 24px 24px 0;}
     .cat-color-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
 
-    /* MAIN */
     .body{display:flex;flex:1;overflow:hidden;}
     .main{flex:1;overflow-y:auto;padding:16px 16px 90px;}
     .section-label{font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.1em;margin:16px 0 10px;}
@@ -51,7 +48,6 @@
     .timeline-label{font-size:18px;font-weight:700;color:var(--text);margin:24px 0 10px;}
     .timeline-label:first-child{margin-top:4px;}
 
-    /* NOTE GRID */
     .notes-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:4px;}
     .note-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:13px 12px 11px;cursor:pointer;transition:border-color .15s,opacity .15s,transform .15s;user-select:none;-webkit-user-select:none;border-left-width:3px;display:flex;flex-direction:column;gap:4px;}
     .note-card:hover{border-color:#555;}
@@ -68,7 +64,6 @@
     .empty-state{text-align:center;color:var(--text3);padding:4rem 1rem;font-size:15px;line-height:2;}
     .search-results-label{font-size:13px;color:var(--text3);margin-bottom:12px;}
 
-    /* SELECTION MODE */
     .note-card.selected{outline:2px solid var(--accent);background:#1a2535;}
     .note-card.selected.pinned{background:#1a2535;}
     .note-card.selected.is-task{background:#1a2535;}
@@ -77,7 +72,6 @@
     .note-card.selected .sel-check{background:var(--accent);border-color:var(--accent);}
     .note-card{position:relative;}
 
-    /* SELECTION TOOLBAR (replaces normal header in selection mode) */
     .sel-header{display:none;height:var(--header-h);background:var(--surface);border-bottom:1px solid var(--border);align-items:center;padding:0 16px;gap:10px;flex-shrink:0;z-index:100;}
     .sel-header.active{display:flex;}
     .header.hidden{display:none;}
@@ -87,21 +81,17 @@
     .sel-btn.danger{border-color:#ff6b6b;color:#ff6b6b;}
     .sel-btn.accent{border-color:var(--accent);color:var(--accent);}
 
-    /* BULK MOVE DROPDOWN */
     #bulkCatDropdown{display:none;position:fixed;top:64px;left:16px;width:240px;background:var(--surface);border:1px solid var(--border);border-radius:14px;z-index:9999;box-shadow:0 8px 32px rgba(0,0,0,.7);max-height:320px;overflow-y:auto;}
 
-    /* FAB */
     .fab{position:fixed;bottom:28px;right:24px;width:56px;height:56px;border-radius:50%;background:var(--accent);color:#111;border:none;font-size:30px;cursor:pointer;z-index:150;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(138,180,248,.3);transition:transform .15s;}
     .fab:active{transform:scale(.92);}
 
-    /* SHEETS */
     .sheet-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:300;align-items:flex-end;}
     .sheet-overlay.open{display:flex;}
     .sheet{background:var(--surface);width:100%;border-radius:22px 22px 0 0;padding:20px 20px 40px;border-top:1px solid var(--border);max-height:92vh;overflow-y:auto;}
     .sheet-handle{width:36px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 18px;}
     .sheet-title{font-size:17px;font-weight:700;color:var(--text);margin-bottom:16px;}
 
-    /* ADD NOTE */
     .modal input.title-input{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:16px;font-weight:600;font-family:inherit;padding:10px 12px;outline:none;margin-bottom:8px;}
     .modal input.title-input:focus{border-color:var(--accent);}
     .modal input.title-input::placeholder{color:var(--text3);font-weight:400;}
@@ -129,24 +119,29 @@
     #modalStatus.error{color:#ff6b6b;}
     #modalStatus.success{color:#6bcb77;}
 
-    /* EDITOR */
     .note-editor{display:none;position:fixed;inset:0;background:var(--bg);z-index:500;flex-direction:column;}
     .note-editor.open{display:flex;}
-    .editor-header{display:flex;align-items:center;gap:6px;padding:0 12px;height:var(--header-h);background:var(--surface);border-bottom:1px solid var(--border);flex-shrink:0;overflow-x:auto;}
-    .editor-back{background:none;border:none;color:var(--accent);font-size:24px;cursor:pointer;padding:4px 4px 4px 0;line-height:1;flex-shrink:0;}
-    .editor-cat-badge{font-size:12px;background:var(--surface2);border:1px solid var(--border);border-radius:20px;padding:5px 12px;flex:1;min-width:80px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;}
+    .editor-header{display:flex;align-items:center;gap:6px;padding:0 12px;height:var(--header-h);background:var(--surface);border-bottom:1px solid var(--border);flex-shrink:0;}
+    .editor-back{background:none;border:none;color:var(--accent);font-size:28px;cursor:pointer;padding:4px 4px 4px 0;line-height:1;flex-shrink:0;}
+    .editor-cat-badge{font-size:12px;background:var(--surface2);border:1px solid var(--border);border-radius:20px;padding:5px 12px;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;}
     .editor-cat-badge:hover{border-color:var(--accent);}
-    .editor-top-btn{background:none;border:1px solid var(--border);border-radius:20px;padding:5px 10px;font-size:13px;color:var(--text2);cursor:pointer;white-space:nowrap;flex-shrink:0;}
-    .editor-top-btn.pin-on{border-color:#f4c542;color:#f4c542;}
-    .editor-top-btn.task-on{border-color:#6bcb77;color:#6bcb77;}
-    .editor-top-btn.del{border-color:#4a2020;color:#ff6b6b;}
+    .editor-top-btn{background:none;border:1px solid var(--border);border-radius:20px;padding:7px 14px;font-size:15px;color:var(--text2);cursor:pointer;white-space:nowrap;flex-shrink:0;}
+    .editor-top-btn:hover{border-color:var(--text2);}
+    .editor-top-btn.done-btn{border-color:var(--accent);color:var(--accent);font-weight:600;}
     .editor-autosave{font-size:13px;color:var(--text3);flex-shrink:0;min-width:16px;text-align:center;}
     .editor-body{flex:1;overflow-y:auto;padding:20px 18px;}
     .editor-title{width:100%;background:transparent;border:none;outline:none;color:var(--text);font-size:22px;font-weight:700;font-family:inherit;margin-bottom:14px;border-bottom:1px solid var(--border);padding-bottom:12px;}
     .editor-title::placeholder{color:var(--text3);}
     .editor-textarea{width:100%;background:transparent;border:none;outline:none;color:var(--text);font-size:16px;font-family:inherit;line-height:1.8;resize:none;min-height:calc(100vh - 200px);}
 
-    /* CAT PICKER */
+    /* EDITOR MENU */
+    .editor-menu{display:none;position:fixed;top:64px;right:16px;width:190px;background:var(--surface);border:1px solid var(--border);border-radius:14px;z-index:9999;box-shadow:0 8px 32px rgba(0,0,0,.7);overflow:hidden;}
+    .editor-menu-item{display:flex;align-items:center;gap:12px;padding:14px 16px;font-size:15px;color:var(--text2);cursor:pointer;}
+    .editor-menu-item:hover{background:var(--surface2);}
+    .editor-menu-item:not(:last-child){border-bottom:1px solid var(--border);}
+    .editor-menu-item.danger{color:#ff6b6b;}
+    .editor-menu-item.active-state{color:var(--accent);}
+
     .cat-picker-list{display:flex;flex-direction:column;gap:2px;}
     .cat-picker-item{display:flex;align-items:center;gap:14px;padding:13px 14px;border-radius:10px;cursor:pointer;font-size:15px;color:var(--text2);}
     .cat-picker-item:hover{background:var(--surface2);}
@@ -155,7 +150,6 @@
     .cat-picker-add{display:flex;align-items:center;gap:14px;padding:13px 14px;border-radius:10px;cursor:pointer;font-size:15px;color:var(--accent);}
     .cat-picker-add:hover{background:var(--surface2);}
 
-    /* DELETE CONFIRM */
     .delete-confirm{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:700;align-items:center;justify-content:center;}
     .delete-confirm.open{display:flex;}
     .delete-confirm-box{background:var(--surface);border-radius:18px;padding:26px 22px;width:290px;text-align:center;border:1px solid var(--border);}
@@ -166,7 +160,6 @@
     .dc-cancel{background:var(--surface2);color:var(--text2);border:1px solid var(--border);}
     .dc-delete{background:#3a1010;color:#ff6b6b;border:1px solid #6a2020;}
 
-    /* SETTINGS */
     .settings-row{display:flex;gap:8px;align-items:center;margin-bottom:10px;}
     .settings-row input{flex:1;padding:10px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:14px;font-family:monospace;outline:none;}
     .settings-row input:focus{border-color:var(--accent);}
@@ -176,7 +169,6 @@
     .danger-btn{width:100%;padding:12px;background:none;color:#ff6b6b;border:1px solid #ff6b6b;border-radius:10px;font-size:14px;cursor:pointer;margin-top:6px;}
     .no-key-banner{background:#3a2e00;border:1px solid #7a6000;border-radius:8px;padding:10px 14px;font-size:13px;color:#ffd770;margin-bottom:14px;text-align:center;cursor:pointer;}
 
-    /* STATS PAGE */
     .stats-page{padding:16px 16px 90px;}
     .stat-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:16px;margin-bottom:12px;}
     .stat-card-title{font-size:12px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:12px;}
@@ -204,7 +196,6 @@
 
 <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-<!-- SIDEBAR -->
 <div class="sidebar" id="sidebar">
   <div class="sidebar-logo">📝 Smart Notes</div>
   <div style="padding-top:8px;">
@@ -223,7 +214,6 @@
   <div class="sidebar-item" onclick="openSettings()"><span class="icon">⚙️</span> Settings</div>
 </div>
 
-<!-- NORMAL HEADER -->
 <div class="header" id="normalHeader">
   <button class="hamburger" onclick="toggleSidebar()">☰</button>
   <span class="header-title" id="headerTitle">Home</span>
@@ -234,7 +224,6 @@
   </div>
 </div>
 
-<!-- SELECTION HEADER (shown during selection mode) -->
 <div class="sel-header" id="selHeader">
   <button class="sel-btn" onclick="exitSelectionMode()">✕ Cancel</button>
   <span class="sel-count" id="selCount">0 selected</span>
@@ -244,16 +233,12 @@
   <button class="sel-btn danger" id="selDeleteBtn" onclick="bulkDelete()" style="display:none;">🗑️ Bin</button>
 </div>
 
-<!-- BULK MOVE DROPDOWN -->
 <div id="bulkCatDropdown"></div>
 
-<!-- MAIN -->
 <div class="body"><div class="main" id="mainContent"></div></div>
 
-<!-- FAB -->
 <button class="fab" id="fab-btn" onclick="openAddModal()">＋</button>
 
-<!-- ADD NOTE SHEET -->
 <div class="sheet-overlay" id="addModal">
   <div class="sheet modal">
     <div class="sheet-handle"></div>
@@ -281,10 +266,8 @@
   <div class="editor-header">
     <button class="editor-back" onclick="closeEditor()">‹</button>
     <span class="editor-cat-badge" id="editorCatBadge" onclick="toggleCatDropdown()">📥 Unsorted ▾</span>
-    <button class="editor-top-btn" id="editorPinBtn" onclick="toggleEditorPin()">📌</button>
-    <button class="editor-top-btn" id="editorTaskBtn" onclick="toggleEditorTask()">☐</button>
-    <button class="editor-top-btn del" onclick="deleteFromEditor()">🗑️</button>
-    <button class="editor-top-btn" id="editorDoneBtn" onclick="dismissKeyboard()">✓</button>
+    <button class="editor-top-btn done-btn" onclick="dismissKeyboard()">✓</button>
+    <button class="editor-top-btn" id="editorMenuBtn" onclick="toggleEditorMenu()">⋯</button>
     <span class="editor-autosave" id="editorAutosave"></span>
   </div>
   <div class="editor-body">
@@ -293,7 +276,19 @@
   </div>
 </div>
 
-<!-- CAT DROPDOWN — fixed position, outside editor so it's never clipped -->
+<!-- EDITOR MENU -->
+<div class="editor-menu" id="editorMenu">
+  <div class="editor-menu-item" id="menuPinItem" onclick="toggleEditorPin()">
+    <span id="menuPinIcon">📌</span><span id="menuPinLabel">Pin note</span>
+  </div>
+  <div class="editor-menu-item" id="menuTaskItem" onclick="toggleEditorTask()">
+    <span id="menuTaskIcon">☐</span><span id="menuTaskLabel">Mark as task</span>
+  </div>
+  <div class="editor-menu-item danger" onclick="deleteFromEditor()">
+    <span>🗑️</span><span>Move to bin</span>
+  </div>
+</div>
+
 <div id="catDropdown" style="display:none;position:fixed;top:64px;left:16px;width:240px;max-width:calc(100vw - 32px);background:var(--surface);border:1px solid var(--border);border-radius:14px;z-index:9999;box-shadow:0 8px 32px rgba(0,0,0,.7);max-height:320px;overflow-y:auto;overflow-x:hidden;">
   <div id="catDropdownList"></div>
   <div style="border-top:1px solid var(--border);padding:8px 10px;display:flex;gap:6px;">
@@ -302,7 +297,6 @@
   </div>
 </div>
 
-<!-- DELETE CONFIRM -->
 <div class="delete-confirm" id="deleteConfirm">
   <div class="delete-confirm-box">
     <h3>Move to Bin?</h3>
@@ -314,7 +308,6 @@
   </div>
 </div>
 
-<!-- SETTINGS SHEET -->
 <div class="sheet-overlay" id="settingsModal">
   <div class="sheet">
     <div class="sheet-handle"></div>
@@ -336,16 +329,11 @@ const NOTES_KEY="sn_notes_v5",CATS_KEY="sn_cats_v5",API_KEY_KEY="sn_apikey",CLAU
 const CAT_COLORS=["#e05c5c","#e07c3a","#d4a017","#7cb87c","#4aab8a","#4a9fd4","#6a7fd4","#9b6ad4","#d46aa0","#d4a06a","#5cb8b8","#b85c8a","#8ab85c","#5c8ab8","#b8a05c","#7a5cb8","#b85c5c","#5cb87a","#b8875c","#5c9ab8"];
 const DEFAULT_CATS=[{name:"Health",icon:"❤️"},{name:"Finances",icon:"💰"},{name:"Movies",icon:"🎬"},{name:"Shopping",icon:"🛒"},{name:"Learn",icon:"📚"},{name:"Stocks",icon:"📈"},{name:"Unsorted",icon:"📥"}];
 const MONTHS=["January","February","March","April","May","June","July","August","September","October","November","December"];
-const PROTECTED_CATS=["Unsorted"]; // Categories that cannot be deleted
+const PROTECTED_CATS=["Unsorted"];
 
 let currentView="pinned",selectedCat=null,isTaskMode=false,editingNoteId=null,searchQuery="",autoSaveTimer=null,longPressTimer=null,pendingDeleteId=null;
+let selectionMode=false,selectedIds=new Set(),selectionInBin=false;
 
-/* SELECTION MODE STATE */
-let selectionMode=false;
-let selectedIds=new Set();
-let selectionInBin=false;
-
-/* HELPERS */
 function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6);}
 function getApiKey(){return localStorage.getItem(API_KEY_KEY)||"";}
 function loadNotes(){try{return JSON.parse(localStorage.getItem(NOTES_KEY))||[];}catch{return[];}}
@@ -363,7 +351,6 @@ function highlightText(t,q){const e=escHtml(t);if(!q)return e;return e.replace(n
 function fmtDate(ts){return new Date(ts).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});}
 function isProtectedCat(name){return PROTECTED_CATS.includes(name);}
 
-/* TIMELINE */
 function getTimelineGroup(ts){
   const now=new Date(),date=new Date(ts),diffDays=(now-date)/(864e5);
   if(diffDays<1&&now.getDate()===date.getDate())return"Today";
@@ -377,11 +364,9 @@ function getTimelineGroup(ts){
 const TL_ORDER=["Today","Yesterday","Previous 7 Days","Previous 30 Days"];
 function tlSort(a,b){const ai=TL_ORDER.indexOf(a),bi=TL_ORDER.indexOf(b);if(ai>=0&&bi>=0)return ai-bi;if(ai>=0)return-1;if(bi>=0)return 1;return b.localeCompare(a);}
 
-/* SEARCH */
 function onSearchInput(){searchQuery=document.getElementById("searchInput").value.trim();document.getElementById("searchClear").classList.toggle("visible",searchQuery.length>0);renderMain();}
 function clearSearch(){document.getElementById("searchInput").value="";searchQuery="";document.getElementById("searchClear").classList.remove("visible");renderMain();}
 
-/* SIDEBAR */
 function toggleSidebar(){document.getElementById("sidebar").classList.toggle("open");document.getElementById("sidebarOverlay").classList.toggle("open");}
 function closeSidebar(){document.getElementById("sidebar").classList.remove("open");document.getElementById("sidebarOverlay").classList.remove("open");}
 function renderSidebarCats(){
@@ -399,7 +384,7 @@ function renderSidebarCats(){
   }).join("");}
 
 function deleteCategory(cat){
-  if(isProtectedCat(cat))return; // Safety guard
+  if(isProtectedCat(cat))return;
   if(!confirm(`Delete category "${cat}"?\nNotes will move to Unsorted.`))return;
   saveCatsArr(loadCats().filter(c=>c.name!==cat));
   const notes=loadNotes();notes.forEach(n=>{if(n.cat===cat)n.cat="Unsorted";});saveNotesArr(notes);
@@ -415,7 +400,6 @@ function setView(view){
   renderSidebarCats();renderMain();
 }
 
-/* MAIN RENDER */
 function renderMain(){
   const all=loadNotes(),main=document.getElementById("mainContent");
   if(currentView==="stats"){main.innerHTML="";main.appendChild(buildStatsPage());return;}
@@ -432,13 +416,6 @@ function renderMain(){
     if(tasks.length)html+=`<div class="section-label">✅ Tasks</div><div class="notes-grid">${tasks.map(n=>noteCard(n)).join("")}</div>`;
     if(pinned.length)html+=`<div class="section-label">📌 Pinned</div><div class="notes-grid">${pinned.map(n=>noteCard(n)).join("")}</div>`;
     if(others.length)html+=timelineGrid(others);
-  }else if(currentView==="all"){
-    const active=all.filter(n=>!n.deleted);
-    if(!active.length){main.innerHTML=`<div class="empty-state">📝<br>No notes yet.</div>`;return;}
-    const tasks=active.filter(n=>n.isTask),pinned=active.filter(n=>n.pinned&&!n.isTask),others=active.filter(n=>!n.pinned&&!n.isTask);
-    if(tasks.length)html+=`<div class="section-label">✅ Tasks</div><div class="notes-grid">${tasks.map(n=>noteCard(n)).join("")}</div>`;
-    if(pinned.length)html+=`<div class="section-label">📌 Pinned</div><div class="notes-grid">${pinned.map(n=>noteCard(n)).join("")}</div>`;
-    if(others.length)html+=timelineGrid(others);
   }else if(currentView==="tasks"){
     const tasks=all.filter(n=>n.isTask&&!n.deleted);
     if(!tasks.length){main.innerHTML=`<div class="empty-state">✅<br>No tasks yet.</div>`;return;}
@@ -450,7 +427,6 @@ function renderMain(){
   }else if(currentView.startsWith("cat:")){
     const cat=currentView.slice(4),notes=all.filter(n=>n.cat===cat&&!n.deleted);
     const safe=cat.replace(/\\/g,"\\\\").replace(/'/g,"\\'");
-    // Only show "Delete Category" button for non-protected categories
     const deleteBtn=isProtectedCat(cat)
       ? ""
       : `<div style="display:flex;justify-content:flex-end;margin-bottom:12px;"><button onclick="deleteCategory('${safe}')" style="background:none;border:1px solid #ff6b6b;color:#ff6b6b;border-radius:20px;padding:7px 16px;font-size:13px;cursor:pointer;">🗑️ Delete Category</button></div>`;
@@ -466,7 +442,6 @@ function timelineGrid(notes){
   return Object.keys(groups).sort(tlSort).map(key=>`<div class="timeline-label">${escHtml(key)}</div><div class="notes-grid">${groups[key].map(n=>noteCard(n)).join("")}</div>`).join("");
 }
 
-/* NOTE CARD */
 function noteCard(note,inBin=false,query=""){
   const id=note.id,color=getCatColor(note.cat);
   const titleHtml=note.title?`<div class="note-card-title">${query?highlightText(note.title,query):escHtml(note.title)}</div>`:"";
@@ -498,56 +473,36 @@ function noteCard(note,inBin=false,query=""){
   </div>`;
 }
 
-/* LONG PRESS — now enters selection mode */
 function startLongPress(id,inBin,e){
   cancelLongPress();
   const card=document.getElementById("card-"+id);if(card)card.classList.add("pressing");
-  longPressTimer=setTimeout(()=>{
-    cancelLongPress();
-    enterSelectionMode(id,inBin);
-  },700);
+  longPressTimer=setTimeout(()=>{cancelLongPress();enterSelectionMode(id,inBin);},700);
 }
 function cancelLongPress(){clearTimeout(longPressTimer);longPressTimer=null;document.querySelectorAll(".note-card.pressing").forEach(c=>c.classList.remove("pressing"));}
 
-/* SELECTION MODE */
 function enterSelectionMode(firstId,inBin){
-  selectionMode=true;
-  selectionInBin=inBin;
-  selectedIds=new Set([firstId]);
+  selectionMode=true;selectionInBin=inBin;selectedIds=new Set([firstId]);
   document.getElementById("normalHeader").classList.add("hidden");
   document.getElementById("selHeader").classList.add("active");
   document.getElementById("mainContent").classList.add("selection-mode");
   document.getElementById("fab-btn").style.display="none";
-  updateSelectionToolbar();
-  renderMain();
+  updateSelectionToolbar();renderMain();
 }
-
 function exitSelectionMode(){
-  selectionMode=false;
-  selectionInBin=false;
-  selectedIds=new Set();
+  selectionMode=false;selectionInBin=false;selectedIds=new Set();
   document.getElementById("normalHeader").classList.remove("hidden");
   document.getElementById("selHeader").classList.remove("active");
   document.getElementById("mainContent").classList.remove("selection-mode");
   document.getElementById("fab-btn").style.display="";
-  closeBulkCatDropdown();
-  renderMain();
+  closeBulkCatDropdown();renderMain();
 }
-
 function toggleSelect(id){
-  if(selectedIds.has(id))selectedIds.delete(id);
-  else selectedIds.add(id);
+  if(selectedIds.has(id))selectedIds.delete(id);else selectedIds.add(id);
   if(selectedIds.size===0){exitSelectionMode();return;}
   updateSelectionToolbar();
-  const note=loadNotes().find(n=>n.id===id);
   const card=document.getElementById("card-"+id);
-  if(card){
-    card.classList.toggle("selected",selectedIds.has(id));
-    const chk=card.querySelector(".sel-check");
-    if(chk)chk.textContent=selectedIds.has(id)?"✓":"";
-  }
+  if(card){card.classList.toggle("selected",selectedIds.has(id));const chk=card.querySelector(".sel-check");if(chk)chk.textContent=selectedIds.has(id)?"✓":"";}
 }
-
 function updateSelectionToolbar(){
   const count=selectedIds.size;
   document.getElementById("selCount").textContent=count+" selected";
@@ -557,31 +512,22 @@ function updateSelectionToolbar(){
   document.getElementById("selPermDeleteBtn").style.display=selectionInBin?"":"none";
 }
 
-/* BULK ACTIONS */
 function bulkDelete(){
   if(!selectedIds.size)return;
   if(!confirm(`Move ${selectedIds.size} note${selectedIds.size>1?"s":""} to bin?`))return;
-  const notes=loadNotes();
-  notes.forEach(n=>{if(selectedIds.has(n.id)){n.deleted=true;n.pinned=false;}});
-  saveNotesArr(notes);
-  exitSelectionMode();
+  const notes=loadNotes();notes.forEach(n=>{if(selectedIds.has(n.id)){n.deleted=true;n.pinned=false;}});
+  saveNotesArr(notes);exitSelectionMode();
 }
-
 function bulkRestore(){
   if(!selectedIds.size)return;
-  const notes=loadNotes();
-  notes.forEach(n=>{if(selectedIds.has(n.id))n.deleted=false;});
-  saveNotesArr(notes);
-  exitSelectionMode();
+  const notes=loadNotes();notes.forEach(n=>{if(selectedIds.has(n.id))n.deleted=false;});
+  saveNotesArr(notes);exitSelectionMode();
 }
-
 function bulkPermDelete(){
   if(!selectedIds.size)return;
   if(!confirm(`Permanently delete ${selectedIds.size} note${selectedIds.size>1?"s":""}? This cannot be undone.`))return;
-  saveNotesArr(loadNotes().filter(n=>!selectedIds.has(n.id)));
-  exitSelectionMode();
+  saveNotesArr(loadNotes().filter(n=>!selectedIds.has(n.id)));exitSelectionMode();
 }
-
 function openBulkCatDropdown(){
   const cats=loadCats();
   const dd=document.getElementById("bulkCatDropdown");
@@ -598,28 +544,17 @@ function openBulkCatDropdown(){
   dd.style.display="block";
   setTimeout(()=>document.addEventListener("click",outsideBulkDropdownClick),10);
 }
-
 function outsideBulkDropdownClick(e){
-  const dd=document.getElementById("bulkCatDropdown");
-  const btn=document.getElementById("selMoveBtn");
+  const dd=document.getElementById("bulkCatDropdown"),btn=document.getElementById("selMoveBtn");
   if(!dd.contains(e.target)&&!btn.contains(e.target))closeBulkCatDropdown();
 }
-
-function closeBulkCatDropdown(){
-  document.getElementById("bulkCatDropdown").style.display="none";
-  document.removeEventListener("click",outsideBulkDropdownClick);
-}
-
+function closeBulkCatDropdown(){document.getElementById("bulkCatDropdown").style.display="none";document.removeEventListener("click",outsideBulkDropdownClick);}
 function bulkMoveToCategory(cat){
   closeBulkCatDropdown();
-  const notes=loadNotes();
-  notes.forEach(n=>{if(selectedIds.has(n.id)){n.cat=cat;n.aiPending=false;}});
-  saveNotesArr(notes);
-  renderSidebarCats();
-  exitSelectionMode();
+  const notes=loadNotes();notes.forEach(n=>{if(selectedIds.has(n.id)){n.cat=cat;n.aiPending=false;}});
+  saveNotesArr(notes);renderSidebarCats();exitSelectionMode();
 }
 
-/* DELETE CONFIRM (single note from editor) */
 function showDeleteConfirm(id){
   pendingDeleteId=id;
   const note=loadNotes().find(n=>n.id===id),preview=(note?(note.title||note.text||""):"").slice(0,50);
@@ -631,16 +566,43 @@ function confirmDelete(){
   if(!pendingDeleteId)return;
   const wasEditing=editingNoteId===pendingDeleteId;
   if(wasEditing)closeEditor();
-  deleteNote(pendingDeleteId);
-  closeDeleteConfirm();
+  deleteNote(pendingDeleteId);closeDeleteConfirm();
 }
 
-/* NOTE ACTIONS */
 function deleteNote(id){const notes=loadNotes(),n=notes.find(n=>n.id===id);if(n){n.deleted=true;n.pinned=false;saveNotesArr(notes);renderMain();}}
 function restoreNote(id){const notes=loadNotes(),n=notes.find(n=>n.id===id);if(n){n.deleted=false;saveNotesArr(notes);renderMain();}}
 function permDelete(id){if(!confirm("Delete forever?"))return;saveNotesArr(loadNotes().filter(n=>n.id!==id));renderMain();}
 
-/* EDITOR */
+/* EDITOR MENU */
+function toggleEditorMenu(){
+  const menu=document.getElementById("editorMenu");
+  if(menu.style.display==="none"||menu.style.display===""){
+    updateEditorMenuState();
+    menu.style.display="block";
+    setTimeout(()=>document.addEventListener("click",outsideEditorMenuClick),10);
+  }else{
+    closeEditorMenu();
+  }
+}
+function closeEditorMenu(){
+  document.getElementById("editorMenu").style.display="none";
+  document.removeEventListener("click",outsideEditorMenuClick);
+}
+function outsideEditorMenuClick(e){
+  const menu=document.getElementById("editorMenu"),btn=document.getElementById("editorMenuBtn");
+  if(!menu.contains(e.target)&&!btn.contains(e.target))closeEditorMenu();
+}
+function updateEditorMenuState(){
+  if(!editingNoteId)return;
+  const note=loadNotes().find(n=>n.id===editingNoteId);if(!note)return;
+  document.getElementById("menuPinIcon").textContent=note.pinned?"📌":"🖇️";
+  document.getElementById("menuPinLabel").textContent=note.pinned?"Unpin note":"Pin note";
+  document.getElementById("menuPinItem").className="editor-menu-item"+(note.pinned?" active-state":"");
+  document.getElementById("menuTaskIcon").textContent=note.isTask?"✅":"☐";
+  document.getElementById("menuTaskLabel").textContent=note.isTask?"Unmark as task":"Mark as task";
+  document.getElementById("menuTaskItem").className="editor-menu-item"+(note.isTask?" active-state":"");
+}
+
 function openEditor(id){
   const note=loadNotes().find(n=>n.id===id);if(!note)return;
   editingNoteId=id;
@@ -650,35 +612,30 @@ function openEditor(id){
   const badge=document.getElementById("editorCatBadge");
   badge.textContent=getCatIcon(note.cat||"")+" "+(note.cat||"Unsorted")+" ▾";
   badge.style.color=color;badge.style.borderColor=color+"88";
-  document.getElementById("editorAutosave").textContent="✓";
-  const pinBtn=document.getElementById("editorPinBtn");
-  pinBtn.textContent=note.pinned?"📌":"🖇️";pinBtn.className="editor-top-btn"+(note.pinned?" pin-on":"");
-  const taskBtn=document.getElementById("editorTaskBtn");
-  taskBtn.textContent=note.isTask?"✅":"☐";taskBtn.className="editor-top-btn"+(note.isTask?" task-on":"");
+  document.getElementById("editorAutosave").textContent="";
   document.getElementById("noteEditor").classList.add("open");
   setTimeout(()=>document.getElementById("editorTextarea").focus(),150);
 }
 function closeEditor(){
-  closeCatDropdown();
+  closeCatDropdown();closeEditorMenu();
   document.getElementById("noteEditor").classList.remove("open");
   clearTimeout(autoSaveTimer);editingNoteId=null;renderMain();
 }
-function deleteFromEditor(){
-  if(!editingNoteId)return;
-  showDeleteConfirm(editingNoteId);
-}
+function deleteFromEditor(){closeEditorMenu();if(!editingNoteId)return;showDeleteConfirm(editingNoteId);}
+
 function toggleEditorPin(){
+  closeEditorMenu();
   if(!editingNoteId)return;
   const notes=loadNotes(),note=notes.find(n=>n.id===editingNoteId);if(!note)return;
   note.pinned=!note.pinned;saveNotesArr(notes);
-  const btn=document.getElementById("editorPinBtn");btn.textContent=note.pinned?"📌":"🖇️";btn.className="editor-top-btn"+(note.pinned?" pin-on":"");
 }
 function toggleEditorTask(){
+  closeEditorMenu();
   if(!editingNoteId)return;
   const notes=loadNotes(),note=notes.find(n=>n.id===editingNoteId);if(!note)return;
   note.isTask=!note.isTask;saveNotesArr(notes);
-  const btn=document.getElementById("editorTaskBtn");btn.textContent=note.isTask?"✅":"☐";btn.className="editor-top-btn"+(note.isTask?" task-on":"");
 }
+
 function triggerAutoSave(){
   document.getElementById("editorAutosave").textContent="●";
   clearTimeout(autoSaveTimer);
@@ -695,7 +652,6 @@ document.getElementById("editorTitle").addEventListener("input",triggerAutoSave)
 document.getElementById("editorTitle").addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();document.getElementById("editorTextarea").focus();}});
 document.getElementById("noteTitleInput").addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();document.getElementById("noteInput").focus();}});
 
-/* CAT DROPDOWN */
 function toggleCatDropdown(){
   const dd=document.getElementById("catDropdown");
   if(dd.style.display==="none"){openCatDropdown();}else{closeCatDropdown();}
@@ -721,24 +677,20 @@ function openCatDropdown(){
   setTimeout(()=>document.addEventListener("click",outsideCatDropdownClick),10);
 }
 function outsideCatDropdownClick(e){
-  const dd=document.getElementById("catDropdown");
-  const badge=document.getElementById("editorCatBadge");
+  const dd=document.getElementById("catDropdown"),badge=document.getElementById("editorCatBadge");
   if(!dd.contains(e.target)&&!badge.contains(e.target)){closeCatDropdown();}
 }
-function closeCatDropdown(){
-  document.getElementById("catDropdown").style.display="none";
-  document.removeEventListener("click",outsideCatDropdownClick);
-}
+function closeCatDropdown(){document.getElementById("catDropdown").style.display="none";document.removeEventListener("click",outsideCatDropdownClick);}
 function changeNoteCat(cat){
   closeCatDropdown();
-  const id=editingNoteId; if(!id)return;
+  const id=editingNoteId;if(!id)return;
   const notes=loadNotes(),note=notes.find(n=>n.id===id);
   if(note){note.cat=cat;note.aiPending=false;saveNotesArr(notes);}
   const color=getCatColor(cat);
   const badge=document.getElementById("editorCatBadge");
   badge.textContent=getCatIcon(cat)+" "+cat+" ▾";
-  badge.style.color=color; badge.style.borderColor=color+"88";
-  renderSidebarCats(); renderMain();
+  badge.style.color=color;badge.style.borderColor=color+"88";
+  renderSidebarCats();renderMain();
 }
 function confirmDropdownNewCat(){
   const input=document.getElementById("catDropdownInput"),name=input.value.trim();if(!name)return;
@@ -748,7 +700,6 @@ function confirmDropdownNewCat(){
 }
 document.getElementById("catDropdownInput").addEventListener("keydown",e=>{if(e.key==="Enter")confirmDropdownNewCat();});
 
-/* ADD NOTE */
 function toggleTaskMode(){
   isTaskMode=!isTaskMode;
   const btn=document.getElementById("taskToggleBtn");
@@ -789,7 +740,6 @@ function confirmNewCat(){
 function promptAddCat(){closeSidebar();openAddModal();setTimeout(toggleNewCatRow,300);}
 document.getElementById("newCatInput").addEventListener("keydown",e=>{if(e.key==="Enter")confirmNewCat();});
 
-/* SAVE NOTE */
 async function saveNote(){
   const btn=document.getElementById("saveBtn"),status=document.getElementById("modalStatus");
   const title=document.getElementById("noteTitleInput").value.trim(),text=document.getElementById("noteInput").value.trim();
@@ -808,7 +758,6 @@ async function saveNote(){
   if(useAI)runBackgroundAI(noteObj.id,text,title);
 }
 
-/* BACKGROUND AI */
 async function runBackgroundAI(noteId,text,title){
   const apiKey=getApiKey();if(!apiKey)return;
   try{
@@ -833,7 +782,6 @@ function retryAll(){retryPendingAI();retryPendingIcons();}
 window.addEventListener("online",retryAll);
 document.addEventListener("visibilitychange",()=>{if(!document.hidden)retryAll();});
 
-/* SUGGEST ICON */
 async function suggestIconForCat(catName){
   const apiKey=getApiKey();if(!apiKey)return;
   try{
@@ -844,13 +792,8 @@ async function suggestIconForCat(catName){
     if(cat){cat.icon=icon;cat.iconPending=false;saveCatsArr(cats);renderSidebarCats();renderModalPills();renderMain();}
   }catch(e){}
 }
+function retryPendingIcons(){const apiKey=getApiKey();if(!apiKey)return;loadCats().filter(c=>c.iconPending).forEach(c=>suggestIconForCat(c.name));}
 
-function retryPendingIcons(){
-  const apiKey=getApiKey();if(!apiKey)return;
-  loadCats().filter(c=>c.iconPending).forEach(c=>suggestIconForCat(c.name));
-}
-
-/* SETTINGS */
 function openSettings(){
   const k=getApiKey();document.getElementById("keyInput").value=k||"";
   document.getElementById("keyStatus").textContent=k?"✓ API key saved on this device":"";
@@ -866,41 +809,31 @@ function clearKey(){if(!confirm("Remove API key?"))return;localStorage.removeIte
 function clearAllNotes(){if(!confirm("Delete ALL notes permanently?"))return;localStorage.removeItem(NOTES_KEY);closeSettings();renderMain();}
 function emptyBin(){if(!confirm("Permanently delete everything in the bin?"))return;saveNotesArr(loadNotes().filter(n=>!n.deleted));if(currentView==="bin")renderMain();closeSettings();}
 
-/* ═══ STATS PAGE ═══ */
+function dismissKeyboard(){document.activeElement.blur();}
+
 function buildStatsPage(){
   const wrap=document.createElement("div");wrap.className="stats-page";
   const notes=loadNotes().filter(n=>!n.deleted);
   const now=new Date(),todayStr=now.toDateString();
-
   const total=notes.length;
   const todayNotes=notes.filter(n=>new Date(n.ts).toDateString()===todayStr).length;
   const weekAgo=now-7*864e5,monthAgo=now-30*864e5;
   const weekNotes=notes.filter(n=>n.ts>=weekAgo).length;
   const monthNotes=notes.filter(n=>n.ts>=monthAgo).length;
-
   let avgPerDay=0;
-  if(notes.length>0){
-    const oldest=Math.min(...notes.map(n=>n.ts));
-    const days=Math.max(1,(now-oldest)/(864e5));
-    avgPerDay=(total/days).toFixed(1);
-  }
-
+  if(notes.length>0){const oldest=Math.min(...notes.map(n=>n.ts));const days=Math.max(1,(now-oldest)/(864e5));avgPerDay=(total/days).toFixed(1);}
   const daySet=new Set(notes.map(n=>new Date(n.ts).toDateString()));
-  let streak=0;
-  const check=new Date();
+  let streak=0;const check=new Date();
   if(!daySet.has(check.toDateString()))check.setDate(check.getDate()-1);
   while(daySet.has(check.toDateString())){streak++;check.setDate(check.getDate()-1);}
-
   const monthMap={};
   notes.forEach(n=>{const d=new Date(n.ts),key=`${MONTHS[d.getMonth()].slice(0,3)} ${d.getFullYear()}`;monthMap[key]=(monthMap[key]||0)+1;});
   const monthEntries=Object.entries(monthMap).sort((a,b)=>b[1]-a[1]).slice(0,8);
   const maxMonth=Math.max(1,...monthEntries.map(e=>e[1]));
-
   const catMap={};
   notes.forEach(n=>{const c=n.cat||"Unsorted";catMap[c]=(catMap[c]||0)+1;});
   const catEntries=Object.entries(catMap).sort((a,b)=>b[1]-a[1]);
   const cats=loadCats();
-
   wrap.innerHTML=`
     <div class="stat-card">
       <div class="stat-card-title">Overview</div>
@@ -953,18 +886,10 @@ function buildStatsPage(){
   return wrap;
 }
 
-/* INIT */
 setView("pinned");renderSidebarCats();setTimeout(retryAll,1200);
 
-document.getElementById("sidebarOverlay").addEventListener("click", closeSidebar);
-document.getElementById("sidebarOverlay").addEventListener("touchend", function(e){
-  e.preventDefault();
-  closeSidebar();
-});
-
-function dismissKeyboard() {
-  document.activeElement.blur();
-}
+document.getElementById("sidebarOverlay").addEventListener("click",closeSidebar);
+document.getElementById("sidebarOverlay").addEventListener("touchend",function(e){e.preventDefault();closeSidebar();});
 </script>
 </body>
 </html>
