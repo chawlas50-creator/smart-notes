@@ -379,7 +379,7 @@ function renderSidebarCats(){
     const active=currentView==="cat:"+cat.name?"active":"";
     const color=CAT_COLORS[i%CAT_COLORS.length];
     return `<div class="sidebar-cat-row">
-      <div class="sidebar-item ${active}" onclick="event.stopPropagation();setView('cat:${safe}')" ontouchend="event.stopPropagation();event.preventDefault();setView('cat:${safe}')">
+      <div class="sidebar-item ${active}" onclick="event.stopPropagation();setView('cat:${safe}')" ontouchstart="sidebarTouchStart(event)" ontouchend="event.stopPropagation();if(!sidebarTouchMoved)setView('cat:${safe}')">
         <span class="cat-color-dot" style="background:${color};"></span>
         <span>${cat.icon} ${escHtml(cat.name)}</span>
       </div>
@@ -904,6 +904,13 @@ setView("pinned");renderSidebarCats();setTimeout(retryAll,1200);
 
 document.getElementById("sidebarOverlay").addEventListener("click",closeSidebar);
 document.getElementById("sidebarOverlay").addEventListener("touchend",function(e){e.preventDefault();closeSidebar();});
+let sidebarTouchMoved=false;
+function sidebarTouchStart(e){
+  sidebarTouchMoved=false;
+  const startY=e.touches[0].clientY;
+  const onMove=()=>{sidebarTouchMoved=true;};
+  document.addEventListener("touchmove",onMove,{once:true});
+}
 </script>
 </body>
 </html>
