@@ -688,10 +688,18 @@ function openEditor(id){
   document.getElementById("noteEditor").classList.add("open");
   setTimeout(()=>document.getElementById("editorTextarea").focus(),150);
 }
-function closeEditor(){
+  function closeEditor(){
   closeCatDropdown();closeEditorMenu();
+  if(editingNoteId){
+    clearTimeout(autoSaveTimer);
+    const title=document.getElementById("editorTitle").value;
+    const text=document.getElementById("editorTextarea").value;
+    const notes=loadNotes(),note=notes.find(n=>n.id===editingNoteId);
+    if(note){note.title=title;note.text=text;note.ts=Date.now();saveNotesArr(notes);}
+  }
   document.getElementById("noteEditor").classList.remove("open");
-  clearTimeout(autoSaveTimer);editingNoteId=null;renderMain();
+  editingNoteId=null;renderMain();
+
 }
 function deleteFromEditor(){closeEditorMenu();if(!editingNoteId)return;showDeleteConfirm(editingNoteId);}
 function toggleEditorPin(){
