@@ -271,8 +271,11 @@
     <span class="editor-autosave" id="editorAutosave"></span>
   </div>
   <div class="editor-body">
-    <input class="editor-title" type="text" id="editorTitle" placeholder="Title..."/>
-    <textarea class="editor-textarea" id="editorTextarea" placeholder="Write your note..."></textarea>
+    <div style="display:flex;align-items:baseline;justify-content:space-between;border-bottom:1px solid var(--border);margin-bottom:14px;padding-bottom:12px;">
+      <input class="editor-title" type="text" id="editorTitle" placeholder="Title..." style="border:none;padding:0;margin:0;flex:1;"/>
+      <span id="editorWordCount" style="font-size:11px;color:var(--text3);white-space:nowrap;margin-left:10px;flex-shrink:0;">0w · 0c</span>
+    </div>
+<textarea class="editor-textarea" id="editorTextarea" placeholder="Write your note..."></textarea>
   </div>
 </div>
 
@@ -613,6 +616,7 @@ function openEditor(id){
   badge.textContent=getCatIcon(note.cat||"")+" "+(note.cat||"Unsorted")+" ▾";
   badge.style.color=color;badge.style.borderColor=color+"88";
   document.getElementById("editorAutosave").textContent="";
+  updateWordCount();
   document.getElementById("noteEditor").classList.add("open");
   setTimeout(()=>document.getElementById("editorTextarea").focus(),150);
 }
@@ -636,8 +640,9 @@ function toggleEditorTask(){
   note.isTask=!note.isTask;saveNotesArr(notes);
 }
 
-function triggerAutoSave(){
+  function triggerAutoSave(){
   document.getElementById("editorAutosave").textContent="●";
+  updateWordCount();
   clearTimeout(autoSaveTimer);
   autoSaveTimer=setTimeout(()=>{
     if(!editingNoteId)return;
@@ -647,6 +652,15 @@ function triggerAutoSave(){
     document.getElementById("editorAutosave").textContent="✓";
   },500);
 }
+
+function updateWordCount(){
+  const text=document.getElementById("editorTextarea").value;
+  const words=text.trim()===""?0:text.trim().split(/\s+/).length;
+  const chars=text.length;
+  document.getElementById("editorWordCount").textContent=words+"w · "+chars+"c";
+}
+  
+
 document.getElementById("editorTextarea").addEventListener("input",triggerAutoSave);
 document.getElementById("editorTitle").addEventListener("input",triggerAutoSave);
 document.getElementById("editorTitle").addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();document.getElementById("editorTextarea").focus();}});
