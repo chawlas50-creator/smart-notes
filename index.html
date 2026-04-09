@@ -372,9 +372,15 @@ function clearSearch(){document.getElementById("searchInput").value="";searchQue
 
 function toggleSidebar(){document.getElementById("sidebar").classList.toggle("open");document.getElementById("sidebarOverlay").classList.toggle("open");}
 function closeSidebar(){document.getElementById("sidebar").classList.remove("open");document.getElementById("sidebarOverlay").classList.remove("open");}
+let sidebarCatsExpanded=false;
+
 function renderSidebarCats(){
   const cats=loadCats();
-  document.getElementById("sidebarCats").innerHTML=cats.map((cat,i)=>{
+  const limit=6;
+  const visible=sidebarCatsExpanded?cats:cats.slice(0,limit);
+  const hasMore=cats.length>limit;
+
+  document.getElementById("sidebarCats").innerHTML=visible.map((cat,i)=>{
     const safe=cat.name.replace(/\\/g,"\\\\").replace(/'/g,"\\'");
     const active=currentView==="cat:"+cat.name?"active":"";
     const color=CAT_COLORS[i%CAT_COLORS.length];
@@ -384,7 +390,18 @@ function renderSidebarCats(){
         <span>${cat.icon} ${escHtml(cat.name)}</span>
       </div>
     </div>`;
-  }).join("");}
+  }).join("")+
+  (hasMore?`<div class="sidebar-item" style="color:var(--text3);font-size:13px;" onclick="toggleSidebarCats()">
+    <span class="icon">${sidebarCatsExpanded?"↑":"↓"}</span>
+    ${sidebarCatsExpanded?"Show less":"Show "+(cats.length-limit)+" more"}
+  </div>`:"");
+}
+
+function toggleSidebarCats(){
+  sidebarCatsExpanded=!sidebarCatsExpanded;
+  renderSidebarCats();
+}
+
 
 function deleteCategory(cat){
   if(isProtectedCat(cat))return;
